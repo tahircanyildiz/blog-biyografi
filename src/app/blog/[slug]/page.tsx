@@ -44,7 +44,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <>
-      <Nav name={`${settings.firstName} ${settings.lastName}`.trim()} />
+      <Nav />
 
       <main className="flex-1">
         <script
@@ -64,7 +64,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </div>
           )}
 
-          <h1 className="text-3xl font-semibold tracking-tight text-ink md:text-4xl">
+          <h1 className="font-serif text-3xl font-semibold tracking-tight text-ink md:text-4xl">
             {post.title}
           </h1>
 

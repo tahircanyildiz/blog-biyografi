@@ -17,7 +17,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <Nav name={`${settings.firstName} ${settings.lastName}`.trim()} />
+      <Nav />
 
       <main className="flex-1">
         <Hero

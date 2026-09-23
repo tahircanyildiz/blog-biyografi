@@ -10,14 +10,9 @@ const SECTIONS = [
   { href: "#projects", label: "Projeler" },
   { href: "#skills", label: "Yetenekler" },
   { href: "#education", label: "Eğitim" },
-  { href: "#contact", label: "İletişim" },
 ];
 
-interface NavProps {
-  name: string;
-}
-
-export function Nav({ name }: NavProps) {
+export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -39,23 +34,34 @@ export function Nav({ name }: NavProps) {
       }`}
     >
       <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-        <Link href="/" className="font-semibold tracking-tight text-ink">
-          {name || "Portfolio"}
-        </Link>
-
-        <div className="hidden items-center gap-6 md:flex">
-          {SECTIONS.map((section) => (
+        <div className="hidden items-center gap-2 md:flex">
+          <a
+            href={SECTIONS[0].href}
+            className="rounded-full bg-ink px-4 py-1.5 text-xs font-medium uppercase tracking-[0.15em] text-bg transition-opacity hover:opacity-90"
+          >
+            {SECTIONS[0].label}
+          </a>
+          {SECTIONS.slice(1).map((section) => (
             <a
               key={section.href}
               href={section.href}
-              className="text-sm text-muted transition-colors hover:text-ink"
+              className="rounded-full px-4 py-1.5 text-xs uppercase tracking-[0.15em] text-muted transition-colors hover:text-ink"
             >
               {section.label}
             </a>
           ))}
+        </div>
+
+        <div className="flex items-center gap-6">
+          <a
+            href="#contact"
+            className="hidden text-xs font-semibold uppercase tracking-[0.15em] text-accent transition-opacity hover:opacity-80 md:inline"
+          >
+            İletişime Geç
+          </a>
           <Link
             href="/blog"
-            className="rounded-full border border-border px-4 py-1.5 text-sm text-ink transition-colors hover:border-border-hover"
+            className="hidden text-xs uppercase tracking-[0.15em] text-muted transition-colors hover:text-ink md:inline"
           >
             Blog
           </Link>
@@ -85,6 +91,13 @@ export function Nav({ name }: NavProps) {
                 {section.label}
               </a>
             ))}
+            <a
+              href="#contact"
+              onClick={() => setMenuOpen(false)}
+              className="text-sm font-semibold text-accent"
+            >
+              İletişime Geç
+            </a>
             <Link
               href="/blog"
               onClick={() => setMenuOpen(false)}

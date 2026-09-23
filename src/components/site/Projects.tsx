@@ -2,6 +2,8 @@ import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 import { GlowCard } from "@/components/ui/GlowCard";
+import { SectionHeading } from "@/components/ui/SectionHeading";
+import { DecorativeLine } from "@/components/ui/DecorativeLine";
 import { splitTags } from "@/lib/content";
 
 interface ProjectItem {
@@ -26,14 +28,14 @@ export function Projects({ items }: ProjectsProps) {
   if (items.length === 0) return null;
 
   return (
-    <section id="projects" className="mx-auto max-w-5xl px-6 py-20">
+    <section id="projects" className="relative mx-auto max-w-5xl px-6 py-20">
+      <DecorativeLine />
+
       <RevealOnScroll>
-        <h2 className="text-2xl font-semibold tracking-tight text-ink md:text-3xl">
-          Projeler
-        </h2>
+        <SectionHeading eyebrow="Seçili Projeler" title="Projeler" />
       </RevealOnScroll>
 
-      <div className="mt-12 space-y-6">
+      <div className="mt-16 space-y-6">
         {items.map((project, index) => (
           <RevealOnScroll key={project.id} delay={Math.min(index * 0.05, 0.2)}>
             <GlowCard className="overflow-hidden">

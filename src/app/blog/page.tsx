@@ -20,12 +20,12 @@ export default async function BlogPage() {
 
   return (
     <>
-      <Nav name={`${settings.firstName} ${settings.lastName}`.trim()} />
+      <Nav />
 
       <main className="flex-1">
         <section className="mx-auto max-w-5xl px-6 py-20">
           <RevealOnScroll>
-            <h1 className="text-3xl font-semibold tracking-tight text-ink md:text-4xl">
+            <h1 className="font-serif text-4xl font-semibold tracking-tight text-ink md:text-5xl">
               Blog
             </h1>
           </RevealOnScroll>

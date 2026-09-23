@@ -1,14 +1,23 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #09090b;
-  --color-surface: #18181b;
-  --color-border: #27272a;
-  --color-border-hover: #3f3f46;
-  --color-ink: #f4f4f5;
-  --color-muted: #a1a1aa;
+  --color-bg: #000000;
+  --color-surface: #0d0d0f;
+  --color-border: #1c1c1f;
+  --color-border-hover: #2e2e33;
+  --color-ink: #f5f5f4;
+  --color-muted: #9a9a9e;
   --color-accent: #f97316;
+
+  /* Skills/kategori vurgu paleti — referans tasarımdaki gibi kategoriye
+     özel renkler (indigo, teal), turuncu ve mavi ile döngüsel kullanılır. */
+  --color-cat-indigo: #818cf8;
+  --color-cat-teal: #2dd4bf;
+  --color-cat-orange: #f97316;
+  --color-cat-blue: #60a5fa;
+
   --font-sans: var(--font-inter);
+  --font-serif: var(--font-fraunces);
 }
 
 * {

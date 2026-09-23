@@ -21,7 +21,7 @@ export function GlowCard({ children, className = "" }: GlowCardProps) {
   return (
     <div
       onMouseMove={handleMouseMove}
-      className={`glow-card rounded-xl border border-border bg-surface transition-colors hover:border-border-hover ${className}`}
+      className={`glow-card rounded-2xl border border-border bg-surface transition-colors hover:border-border-hover ${className}`}
     >
       {children}
     </div>
