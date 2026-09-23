@@ -62,8 +62,11 @@ docker compose up -d --build
   deploy` komutunu otomatik çalıştırır, veritabanı şeması güncel tutulur.
 - SQLite veritabanı dosyası `./data` klasöründe (host'ta) kalıcı olarak saklanır.
 - Yüklenen görseller `./public/uploads` klasöründe (host'ta) kalıcı olarak saklanır.
-- Uygulama container içinde port `3000`'de çalışır ve `docker-compose.yml`
-  içinde host'un `3000` portuna eşlenir.
+- Uygulama container içinde her zaman port `3000`'de çalışır. Host tarafında
+  hangi porta eşleneceği `docker-compose.yml`'deki `ports` satırında
+  belirlenir (`"3242:3000"` gibi — host'ta başka bir servis kullanmıyorsa
+  `"3000:3000"` da yapılabilir). Nginx config'inizdeki `proxy_pass` portunun
+  bununla eşleştiğinden emin olun (bkz. `deploy/nginx.conf.example`).
 
 ### İlk Admin Şifresini Değiştirme
 
