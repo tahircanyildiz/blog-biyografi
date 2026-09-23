@@ -8,8 +8,6 @@ import { SaveBar, type SaveStatus } from "@/components/admin/SaveBar";
 interface ContactSettingsForm {
   location: string;
   email: string;
-  githubUrl: string;
-  linkedinUrl: string;
   footerNote: string;
 }
 
@@ -25,8 +23,6 @@ interface ContactMessage {
 const EMPTY_FORM: ContactSettingsForm = {
   location: "",
   email: "",
-  githubUrl: "",
-  linkedinUrl: "",
   footerNote: "",
 };
 
@@ -98,9 +94,11 @@ export default function AdminContactPage() {
       <form onSubmit={handleSubmit} className="mt-6 flex max-w-xl flex-col gap-4">
         <TextField label="Lokasyon" name="location" value={form.location} onChange={(v) => set("location", v)} />
         <TextField label="E-posta" name="email" value={form.email} onChange={(v) => set("email", v)} />
-        <TextField label="GitHub URL" name="githubUrl" value={form.githubUrl} onChange={(v) => set("githubUrl", v)} />
-        <TextField label="LinkedIn URL" name="linkedinUrl" value={form.linkedinUrl} onChange={(v) => set("linkedinUrl", v)} />
         <TextField label="Footer Notu" name="footerNote" value={form.footerNote} onChange={(v) => set("footerNote", v)} />
+        <p className="text-xs text-muted">
+          GitHub, LinkedIn, Instagram vb. linkler için &quot;Sosyal Medya&quot;
+          sayfasını kullanın.
+        </p>
         <SaveBar status={status} />
       </form>
 

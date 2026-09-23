@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { blog } from "@/lib/blog";
-import { getSiteSettings } from "@/lib/content";
+import { getSiteSettings, getSocialLinks } from "@/lib/content";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
@@ -13,9 +13,10 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
-  const [settings, { posts }] = await Promise.all([
+  const [settings, { posts }, socialLinks] = await Promise.all([
     getSiteSettings(),
     blog.posts.list({ limit: 20, locale: "tr" }),
+    getSocialLinks(),
   ]);
 
   return (
@@ -90,6 +91,7 @@ export default async function BlogPage() {
         firstName={settings.firstName}
         lastName={settings.lastName}
         footerNote={settings.footerNote}
+        socialLinks={socialLinks}
       />
     </>
   );

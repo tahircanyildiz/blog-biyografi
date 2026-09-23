@@ -8,17 +8,22 @@ export async function getSiteSettings() {
   });
 }
 
+export function getSocialLinks() {
+  return prisma.socialLink.findMany({ orderBy: { order: "asc" } });
+}
+
 export async function getHomePageData() {
-  const [settings, experience, projects, skills, education] =
+  const [settings, experience, projects, skills, education, socialLinks] =
     await Promise.all([
       getSiteSettings(),
       prisma.experience.findMany({ orderBy: { order: "asc" } }),
       prisma.project.findMany({ orderBy: { order: "asc" } }),
       prisma.skillGroup.findMany({ orderBy: { order: "asc" } }),
       prisma.education.findMany({ orderBy: { order: "asc" } }),
+      getSocialLinks(),
     ]);
 
-  return { settings, experience, projects, skills, education };
+  return { settings, experience, projects, skills, education, socialLinks };
 }
 
 export function splitTags(tags: string): string[] {

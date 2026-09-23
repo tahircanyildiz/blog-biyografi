@@ -12,7 +12,7 @@ import { Footer } from "@/components/site/Footer";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const { settings, experience, projects, skills, education } =
+  const { settings, experience, projects, skills, education, socialLinks } =
     await getHomePageData();
 
   return (
@@ -41,9 +41,8 @@ export default async function HomePage() {
         <Education items={education} />
         <Contact
           email={settings.email}
-          githubUrl={settings.githubUrl}
-          linkedinUrl={settings.linkedinUrl}
           location={settings.location}
+          socialLinks={socialLinks}
         />
       </main>
 
@@ -51,6 +50,7 @@ export default async function HomePage() {
         firstName={settings.firstName}
         lastName={settings.lastName}
         footerNote={settings.footerNote}
+        socialLinks={socialLinks}
       />
     </>
   );

@@ -1,21 +1,27 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { ExternalLink, Link2, Mail, MapPin } from "lucide-react";
+import { Mail, MapPin } from "lucide-react";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { DecorativeLine } from "@/components/ui/DecorativeLine";
+import { getSocialIcon } from "@/lib/social";
+
+interface SocialLinkItem {
+  id: string;
+  platform: string;
+  url: string;
+}
 
 interface ContactProps {
   email: string;
-  githubUrl: string;
-  linkedinUrl: string;
   location: string;
+  socialLinks: SocialLinkItem[];
 }
 
 type SubmitState = "idle" | "loading" | "success" | "error";
 
-export function Contact({ email, githubUrl, linkedinUrl, location }: ContactProps) {
+export function Contact({ email, location, socialLinks }: ContactProps) {
   const [state, setState] = useState<SubmitState>("idle");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -75,28 +81,21 @@ export function Contact({ email, githubUrl, linkedinUrl, location }: ContactProp
                   {location}
                 </div>
               )}
-              {githubUrl && (
-                <a
-                  href={githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 text-sm text-ink transition-colors hover:text-accent"
-                >
-                  <Link2 size={18} className="text-muted" aria-hidden />
-                  GitHub
-                </a>
-              )}
-              {linkedinUrl && (
-                <a
-                  href={linkedinUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 text-sm text-ink transition-colors hover:text-accent"
-                >
-                  <ExternalLink size={18} className="text-muted" aria-hidden />
-                  LinkedIn
-                </a>
-              )}
+              {socialLinks.map((social) => {
+                const Icon = getSocialIcon(social.platform);
+                return (
+                  <a
+                    key={social.id}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 text-sm text-ink transition-colors hover:text-accent"
+                  >
+                    <Icon size={18} className="text-muted" aria-hidden />
+                    {social.platform}
+                  </a>
+                );
+              })}
             </div>
           </div>
 

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { BlogApiError } from "@lobsterlead/blog-sdk";
 import { toNextMetadata, jsonLdScript } from "@lobsterlead/blog-sdk/next";
 import { blog } from "@/lib/blog";
-import { getSiteSettings } from "@/lib/content";
+import { getSiteSettings, getSocialLinks } from "@/lib/content";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 
@@ -30,7 +30,10 @@ export async function generateMetadata({
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
 
-  const settings = await getSiteSettings();
+  const [settings, socialLinks] = await Promise.all([
+    getSiteSettings(),
+    getSocialLinks(),
+  ]);
 
   let detail;
   try {
@@ -90,6 +93,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         firstName={settings.firstName}
         lastName={settings.lastName}
         footerNote={settings.footerNote}
+        socialLinks={socialLinks}
       />
     </>
   );

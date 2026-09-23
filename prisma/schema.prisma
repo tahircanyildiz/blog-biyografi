@@ -22,8 +22,6 @@ model SiteSettings {
   location       String   @default("")
   profileImage   String   @default("")
   email          String   @default("")
-  githubUrl      String   @default("")
-  linkedinUrl    String   @default("")
   footerNote     String   @default("")
   updatedAt      DateTime @updatedAt
 }
@@ -78,6 +76,13 @@ model Education {
   period      String @default("")
   type        String @default("")
   bullets     String @default("")
+}
+
+model SocialLink {
+  id       String @id @default(cuid())
+  order    Int    @default(0)
+  platform String
+  url      String
 }
 
 model ContactMessage {

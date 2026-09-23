@@ -30,8 +30,6 @@ export async function PUT(request: NextRequest) {
     location,
     profileImage,
     email,
-    githubUrl,
-    linkedinUrl,
     footerNote,
   } = body;
 
@@ -51,8 +49,6 @@ export async function PUT(request: NextRequest) {
       location,
       profileImage,
       email,
-      githubUrl,
-      linkedinUrl,
       footerNote,
     },
     create: {
@@ -70,8 +66,6 @@ export async function PUT(request: NextRequest) {
       location,
       profileImage,
       email,
-      githubUrl,
-      linkedinUrl,
       footerNote,
     },
   });

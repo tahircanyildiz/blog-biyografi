@@ -21,11 +21,18 @@ async function main() {
       location: "İstanbul, Türkiye",
       profileImage: "",
       email: "merhaba@example.com",
-      githubUrl: "https://github.com/",
-      linkedinUrl: "https://linkedin.com/",
       footerNote: "Built with Next.js",
     },
   });
+
+  if ((await prisma.socialLink.count()) === 0) {
+    await prisma.socialLink.createMany({
+      data: [
+        { order: 0, platform: "GitHub", url: "https://github.com/" },
+        { order: 1, platform: "LinkedIn", url: "https://linkedin.com/" },
+      ],
+    });
+  }
 
   if ((await prisma.experience.count()) === 0) {
     await prisma.experience.create({

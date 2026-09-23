@@ -9,6 +9,7 @@ const PROTECTED_API_PREFIXES = [
   "/api/education",
   "/api/upload",
   "/api/contact-messages",
+  "/api/social",
 ];
 
 function isProtectedApi(pathname: string): boolean {
@@ -50,5 +51,6 @@ export const config = {
     "/api/education/:path*",
     "/api/upload/:path*",
     "/api/contact-messages/:path*",
+    "/api/social/:path*",
   ],
 };
