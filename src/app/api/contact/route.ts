@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendContactNotification } from "@/lib/mailer";
 
 export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null);
@@ -22,6 +23,8 @@ export async function POST(request: NextRequest) {
   const created = await prisma.contactMessage.create({
     data: { name, email, message },
   });
+
+  await sendContactNotification({ name, email, message });
 
   return NextResponse.json({ ok: true, id: created.id }, { status: 201 });
 }

@@ -17,6 +17,7 @@
     "@lobsterlead/blog-sdk": "^0.1.1",
     "@prisma/client": "^6.19.3",
     "lucide-react": "^1.47.0",
+    "mailersend": "^3.4.1",
     "motion": "^13.4.1",
     "next": "^15.5.26",
     "prisma": "^6.19.3",
