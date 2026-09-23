@@ -8,7 +8,12 @@ function getClient(): BlogClient {
       baseUrl: process.env.BLOG_BASE_URL!,
       siteKey: process.env.BLOG_SITE_KEY!,
       apiKey: process.env.BLOG_API_KEY,
-      fetchInit: { next: { revalidate: 300, tags: ["blog"] } },
+      // Sayfalar zaten `force-dynamic` (her istekte sunucu render) ama
+      // Next'in fetch veri önbelleği bundan bağımsız çalışır — revalidate
+      // süresi yeni yayımlanan yazıların /blog listesinde görünmesini
+      // geciktiriyordu. Düşük trafikli kişisel site için maliyeti önemsiz
+      // olduğundan tamamen önbelleksiz (her zaman taze) bırakıyoruz.
+      fetchInit: { cache: "no-store" },
     });
   }
   return client;
