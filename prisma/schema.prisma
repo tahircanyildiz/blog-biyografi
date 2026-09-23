@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model SiteSettings {
+  id             Int      @id @default(1)
+  firstName      String   @default("")
+  lastName       String   @default("")
+  roleTitle      String   @default("")
+  tagline        String   @default("")
+  bio            String   @default("")
+  statYearsLabel String   @default("Years Experience")
+  statYearsValue String   @default("")
+  statProjLabel  String   @default("Projects")
+  statProjValue  String   @default("")
+  statLocLabel   String   @default("Location")
+  location       String   @default("")
+  profileImage   String   @default("")
+  email          String   @default("")
+  githubUrl      String   @default("")
+  linkedinUrl    String   @default("")
+  footerNote     String   @default("")
+  updatedAt      DateTime @updatedAt
+}
+
+model Experience {
+  id          String @id @default(cuid())
+  order       Int    @default(0)
+  role        String
+  company     String
+  employment  String @default("")
+  startDate   String
+  endDate     String
+  description String @default("")
+  tags        String @default("")
+  stat1Label  String @default("")
+  stat1Value  String @default("")
+  stat2Label  String @default("")
+  stat2Value  String @default("")
+  stat3Label  String @default("")
+  stat3Value  String @default("")
+}
+
+model Project {
+  id          String @id @default(cuid())
+  order       Int    @default(0)
+  title       String
+  eyebrow1    String @default("")
+  eyebrow2    String @default("")
+  description String @default("")
+  tags        String @default("")
+  mission     String @default("")
+  keyFeature  String @default("")
+  clientName  String @default("")
+  coverImage  String @default("")
+  liveUrl     String @default("")
+}
+
+model SkillGroup {
+  id          String @id @default(cuid())
+  order       Int    @default(0)
+  category    String
+  subcategory String @default("")
+  items       String @default("")
+}
+
+model Education {
+  id          String @id @default(cuid())
+  order       Int    @default(0)
+  icon        String @default("")
+  title       String
+  institution String @default("")
+  period      String @default("")
+  type        String @default("")
+  bullets     String @default("")
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+  read      Boolean  @default(false)
+}

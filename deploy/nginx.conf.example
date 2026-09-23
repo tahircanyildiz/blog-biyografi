@@ -1,0 +1,27 @@
+# Host üzerinde (container dışında) çalışan Nginx için reverse proxy örneği.
+# /etc/nginx/sites-available/domain.com altına kopyalayıp domain adınızı girin,
+# ardından /etc/nginx/sites-enabled altına symlink oluşturun.
+
+server {
+    listen 80;
+    server_name domain.com www.domain.com;
+
+    # Görsel yükleme için 5MB dosya limitine güvenli pay bırakır
+    client_max_body_size 10M;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# SSL kurulumu için (Let's Encrypt / certbot):
+#   sudo apt install certbot python3-certbot-nginx
+#   sudo certbot --nginx -d domain.com -d www.domain.com
+# Certbot bu dosyayı otomatik olarak 443 portu ve SSL yönlendirmesiyle günceller.
