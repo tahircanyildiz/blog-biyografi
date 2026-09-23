@@ -4,12 +4,15 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
+// "/#about" gibi mutlak yol + hash kullanılıyor çünkü bu Nav /blog ve
+// /blog/[slug] sayfalarında da render ediliyor — sadece "#about" o
+// sayfalarda anasayfaya gitmek yerine mevcut URL'e hash ekler.
 const SECTIONS = [
-  { href: "#about", label: "Hakkımda" },
-  { href: "#experience", label: "Deneyim" },
-  { href: "#projects", label: "Projeler" },
-  { href: "#skills", label: "Yetenekler" },
-  { href: "#education", label: "Eğitim" },
+  { href: "/#about", label: "Hakkımda" },
+  { href: "/#experience", label: "Deneyim" },
+  { href: "/#projects", label: "Projeler" },
+  { href: "/#skills", label: "Yetenekler" },
+  { href: "/#education", label: "Eğitim" },
 ];
 
 export function Nav() {
@@ -35,30 +38,30 @@ export function Nav() {
     >
       <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
         <div className="hidden items-center gap-2 md:flex">
-          <a
+          <Link
             href={SECTIONS[0].href}
             className="rounded-full bg-ink px-4 py-1.5 text-xs font-medium uppercase tracking-[0.15em] text-bg transition-opacity hover:opacity-90"
           >
             {SECTIONS[0].label}
-          </a>
+          </Link>
           {SECTIONS.slice(1).map((section) => (
-            <a
+            <Link
               key={section.href}
               href={section.href}
               className="rounded-full px-4 py-1.5 text-xs uppercase tracking-[0.15em] text-muted transition-colors hover:text-ink"
             >
               {section.label}
-            </a>
+            </Link>
           ))}
         </div>
 
         <div className="flex items-center gap-6">
-          <a
-            href="#contact"
+          <Link
+            href="/#contact"
             className="hidden text-xs font-semibold uppercase tracking-[0.15em] text-accent transition-opacity hover:opacity-80 md:inline"
           >
             İletişime Geç
-          </a>
+          </Link>
           <Link
             href="/blog"
             className="hidden text-xs uppercase tracking-[0.15em] text-muted transition-colors hover:text-ink md:inline"
@@ -82,22 +85,22 @@ export function Nav() {
         <div className="border-t border-border bg-bg px-6 py-4 md:hidden">
           <div className="flex flex-col gap-4">
             {SECTIONS.map((section) => (
-              <a
+              <Link
                 key={section.href}
                 href={section.href}
                 onClick={() => setMenuOpen(false)}
                 className="text-sm text-muted transition-colors hover:text-ink"
               >
                 {section.label}
-              </a>
+              </Link>
             ))}
-            <a
-              href="#contact"
+            <Link
+              href="/#contact"
               onClick={() => setMenuOpen(false)}
               className="text-sm font-semibold text-accent"
             >
               İletişime Geç
-            </a>
+            </Link>
             <Link
               href="/blog"
               onClick={() => setMenuOpen(false)}
