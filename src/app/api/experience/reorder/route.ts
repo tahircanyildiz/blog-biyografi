@@ -8,9 +8,15 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: "ids dizisi gerekli" }, { status: 400 });
   }
 
+  // Liste en güncel-önce (order desc) gösterildiği için, admin panelde
+  // görünen sıradaki ilk öğe (index 0) en YÜKSEK order değerini almalı.
+  const lastIndex = ids.length - 1;
   await prisma.$transaction(
     ids.map((id, index) =>
-      prisma.experience.update({ where: { id }, data: { order: index } })
+      prisma.experience.update({
+        where: { id },
+        data: { order: lastIndex - index },
+      })
     )
   );
 

@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
-  const items = await prisma.experience.findMany({ orderBy: { order: "asc" } });
+  // En güncel deneyim en üstte görünsün diye "order" değeri en yüksek
+  // olan (en son eklenen/en üste taşınan) önce gelir — bkz. reorder route.
+  const items = await prisma.experience.findMany({ orderBy: { order: "desc" } });
   return NextResponse.json(items);
 }
 

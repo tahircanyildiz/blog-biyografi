@@ -16,7 +16,8 @@ export async function getHomePageData() {
   const [settings, experience, projects, skills, education, socialLinks] =
     await Promise.all([
       getSiteSettings(),
-      prisma.experience.findMany({ orderBy: { order: "asc" } }),
+      // En güncel deneyim en üstte — bkz. /api/experience/route.ts notu.
+      prisma.experience.findMany({ orderBy: { order: "desc" } }),
       prisma.project.findMany({ orderBy: { order: "asc" } }),
       prisma.skillGroup.findMany({ orderBy: { order: "asc" } }),
       prisma.education.findMany({ orderBy: { order: "asc" } }),
