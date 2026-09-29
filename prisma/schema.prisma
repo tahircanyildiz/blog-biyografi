@@ -23,6 +23,8 @@ model SiteSettings {
   profileImage   String   @default("")
   email          String   @default("")
   footerNote     String   @default("")
+  googleSiteVerification String @default("")
+  googleAnalyticsId      String @default("")
   updatedAt      DateTime @updatedAt
 }
 

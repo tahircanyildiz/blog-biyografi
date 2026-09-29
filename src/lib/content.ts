@@ -1,12 +1,15 @@
+import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 
-export async function getSiteSettings() {
+// `cache()` requests içinde tekilleştirir — root layout ve sayfa
+// component'i aynı istekte ikisi de çağırsa tek DB sorgusu yeterli olur.
+export const getSiteSettings = cache(async function getSiteSettings() {
   return prisma.siteSettings.upsert({
     where: { id: 1 },
     update: {},
     create: { id: 1 },
   });
-}
+});
 
 export function getSocialLinks() {
   return prisma.socialLink.findMany({ orderBy: { order: "asc" } });

@@ -19,8 +19,6 @@ interface SiteSettingsForm {
   location: string;
   profileImage: string;
   email: string;
-  githubUrl: string;
-  linkedinUrl: string;
   footerNote: string;
 }
 
@@ -38,8 +36,6 @@ const EMPTY_FORM: SiteSettingsForm = {
   location: "",
   profileImage: "",
   email: "",
-  githubUrl: "",
-  linkedinUrl: "",
   footerNote: "",
 };
 

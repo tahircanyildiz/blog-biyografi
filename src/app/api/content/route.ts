@@ -31,6 +31,8 @@ export async function PUT(request: NextRequest) {
     profileImage,
     email,
     footerNote,
+    googleSiteVerification,
+    googleAnalyticsId,
   } = body;
 
   const settings = await prisma.siteSettings.upsert({
@@ -50,6 +52,8 @@ export async function PUT(request: NextRequest) {
       profileImage,
       email,
       footerNote,
+      googleSiteVerification,
+      googleAnalyticsId,
     },
     create: {
       id: 1,
@@ -67,6 +71,8 @@ export async function PUT(request: NextRequest) {
       profileImage,
       email,
       footerNote,
+      googleSiteVerification,
+      googleAnalyticsId,
     },
   });
 

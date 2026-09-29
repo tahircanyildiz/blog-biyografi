@@ -12,6 +12,7 @@ const LINKS = [
   { href: "/admin/education", label: "Education" },
   { href: "/admin/contact", label: "Contact & Mesajlar" },
   { href: "/admin/social", label: "Sosyal Medya" },
+  { href: "/admin/seo", label: "SEO & Analytics" },
 ];
 
 const BLOG_ADMIN_URL = "https://blogservice.lobsterlead.com/admin/sites/mrpurposeless";
