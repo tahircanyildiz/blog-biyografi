@@ -18,7 +18,11 @@ export async function generateMetadata({
   const { slug } = await params;
 
   try {
-    const { data: post } = await getTestPostBySlug(slug, "tr");
+    // Dil parametresi verilmiyor — slug tek dilde yayınlıysa API otomatik
+    // çözer. Aynı slug birden fazla dilde varsa 400 invalid_request döner
+    // (aşağıda notFound'a düşürülüyor); şimdilik bu URL yapısında dil
+    // seçici yok.
+    const { data: post } = await getTestPostBySlug(slug);
     const canonical = `${SITE_URL}/blog-test/${post.slug}`;
 
     return {
@@ -35,7 +39,10 @@ export async function generateMetadata({
       },
     };
   } catch (error) {
-    if (error instanceof LobsterLeadTestApiError && error.status === 404) {
+    if (
+      error instanceof LobsterLeadTestApiError &&
+      (error.status === 404 || error.status === 400)
+    ) {
       return {};
     }
     throw error;
@@ -54,11 +61,11 @@ export default async function BlogTestPostPage({
 
   let post;
   try {
-    ({ data: post } = await getTestPostBySlug(slug, "tr"));
+    ({ data: post } = await getTestPostBySlug(slug));
   } catch (error) {
     if (
       error instanceof LobsterLeadTestApiError &&
-      (error.status === 404 || error.status === 410)
+      (error.status === 404 || error.status === 410 || error.status === 400)
     ) {
       notFound();
     }

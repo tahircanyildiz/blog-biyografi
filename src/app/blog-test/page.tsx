@@ -16,7 +16,9 @@ export const metadata: Metadata = {
 export default async function BlogTestPage() {
   const [settings, { data: posts }, socialLinks] = await Promise.all([
     getSiteSettings(),
-    listTestPosts({ limit: 20, language: "tr" }),
+    // Dil filtresi verilmiyor — test hesabında hem TR hem EN yazı
+    // yayınlanabiliyor, hepsi listede görünsün istiyoruz.
+    listTestPosts({ limit: 20 }),
     getSocialLinks(),
   ]);
 
