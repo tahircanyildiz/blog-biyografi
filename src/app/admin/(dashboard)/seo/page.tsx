@@ -3,6 +3,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { TextAreaField, TextField } from "@/components/admin/FormField";
 import { SaveBar, type SaveStatus } from "@/components/admin/SaveBar";
+import { pickFields } from "@/lib/pickFields";
 
 interface SeoForm {
   seoTitle: string;
@@ -44,7 +45,7 @@ export default function AdminSeoPage() {
     fetch("/api/content")
       .then((res) => res.json())
       .then((data) => {
-        setForm({ ...EMPTY_FORM, ...pick(data) });
+        setForm(pickFields(data, EMPTY_FORM));
         setFallbacks({
           name: [data.firstName, data.lastName].filter(Boolean).join(" "),
           role: data.roleTitle ?? "",
@@ -63,13 +64,12 @@ export default function AdminSeoPage() {
     setStatus("saving");
 
     try {
-      // Diğer SiteSettings alanlarını mevcut haliyle koru, sadece bu
-      // sayfanın alanlarını güncelle.
-      const current = await fetch("/api/content").then((res) => res.json());
+      // Sadece bu sayfanın alanları gönderilir; API gönderilmeyen alanlara
+      // dokunmaz.
       const response = await fetch("/api/content", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...current, ...form }),
+        body: JSON.stringify(form),
       });
       if (!response.ok) throw new Error();
       setStatus("success");
@@ -203,12 +203,4 @@ export default function AdminSeoPage() {
       </form>
     </div>
   );
-}
-
-function pick(data: Record<string, unknown>): Partial<SeoForm> {
-  const result: Partial<SeoForm> = {};
-  for (const key of Object.keys(EMPTY_FORM) as (keyof SeoForm)[]) {
-    if (typeof data[key] === "string") result[key] = data[key] as string;
-  }
-  return result;
 }

@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Mail, Trash2 } from "lucide-react";
 import { TextField } from "@/components/admin/FormField";
 import { SaveBar, type SaveStatus } from "@/components/admin/SaveBar";
+import { pickFields } from "@/lib/pickFields";
 
 interface ContactSettingsForm {
   location: string;
@@ -38,7 +39,7 @@ export default function AdminContactPage() {
       fetch("/api/contact-messages").then((res) => res.json()),
     ])
       .then(([settings, msgs]) => {
-        setForm({ ...EMPTY_FORM, ...settings });
+        setForm(pickFields(settings, EMPTY_FORM));
         setMessages(msgs);
       })
       .finally(() => setLoading(false));

@@ -4,7 +4,10 @@ import { useEffect, useState, type FormEvent } from "react";
 import { TextField, TextAreaField } from "@/components/admin/FormField";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { SaveBar, type SaveStatus } from "@/components/admin/SaveBar";
+import { pickFields } from "@/lib/pickFields";
 
+// Lokasyon, e-posta ve footer notu Contact sayfasının alanları; burada
+// tutulmaz ki bu sayfanın kaydı onları eski haliyle ezmesin.
 interface SiteSettingsForm {
   firstName: string;
   lastName: string;
@@ -16,10 +19,7 @@ interface SiteSettingsForm {
   statProjLabel: string;
   statProjValue: string;
   statLocLabel: string;
-  location: string;
   profileImage: string;
-  email: string;
-  footerNote: string;
 }
 
 const EMPTY_FORM: SiteSettingsForm = {
@@ -33,10 +33,7 @@ const EMPTY_FORM: SiteSettingsForm = {
   statProjLabel: "",
   statProjValue: "",
   statLocLabel: "",
-  location: "",
   profileImage: "",
-  email: "",
-  footerNote: "",
 };
 
 export default function AdminHeroPage() {
@@ -47,7 +44,7 @@ export default function AdminHeroPage() {
   useEffect(() => {
     fetch("/api/content")
       .then((res) => res.json())
-      .then((data) => setForm({ ...EMPTY_FORM, ...data }))
+      .then((data) => setForm(pickFields(data, EMPTY_FORM)))
       .finally(() => setLoading(false));
   }, []);
 
