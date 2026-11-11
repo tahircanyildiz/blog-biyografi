@@ -33,6 +33,10 @@ export async function PUT(request: NextRequest) {
     footerNote,
     googleSiteVerification,
     googleAnalyticsId,
+    seoTitle,
+    seoDescription,
+    blogTitle,
+    blogDescription,
   } = body;
 
   const settings = await prisma.siteSettings.upsert({
@@ -54,6 +58,10 @@ export async function PUT(request: NextRequest) {
       footerNote,
       googleSiteVerification,
       googleAnalyticsId,
+      seoTitle,
+      seoDescription,
+      blogTitle,
+      blogDescription,
     },
     create: {
       id: 1,
@@ -73,6 +81,10 @@ export async function PUT(request: NextRequest) {
       footerNote,
       googleSiteVerification,
       googleAnalyticsId,
+      seoTitle,
+      seoDescription,
+      blogTitle,
+      blogDescription,
     },
   });
 

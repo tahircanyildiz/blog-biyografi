@@ -25,6 +25,10 @@ model SiteSettings {
   footerNote     String   @default("")
   googleSiteVerification String @default("")
   googleAnalyticsId      String @default("")
+  seoTitle               String @default("")
+  seoDescription         String @default("")
+  blogTitle              String @default("")
+  blogDescription        String @default("")
   updatedAt      DateTime @updatedAt
 }
 

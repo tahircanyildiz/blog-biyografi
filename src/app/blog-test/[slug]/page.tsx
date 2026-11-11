@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { LobsterLeadTestApiError, getTestPostBySlug } from "@/lib/blogTest";
-import { getSiteSettings, getSocialLinks } from "@/lib/content";
-import { SITE_URL } from "@/lib/blog";
-import { Nav } from "@/components/site/Nav";
+import { jsonLdString } from "@/lib/seo";
+import { SITE_URL } from "@/lib/site";
+import { SiteHeader } from "@/components/site/SiteHeader";
 import { Footer } from "@/components/site/Footer";
 
 export const dynamic = "force-dynamic";
@@ -54,11 +54,6 @@ export default async function BlogTestPostPage({
 }: BlogTestPostPageProps) {
   const { slug } = await params;
 
-  const [settings, socialLinks] = await Promise.all([
-    getSiteSettings(),
-    getSocialLinks(),
-  ]);
-
   let post;
   try {
     ({ data: post } = await getTestPostBySlug(slug));
@@ -85,12 +80,12 @@ export default async function BlogTestPostPage({
 
   return (
     <>
-      <Nav />
+      <SiteHeader />
 
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdString(jsonLd) }}
         />
 
         <article className="post-body mx-auto max-w-3xl px-6 py-20">
@@ -128,12 +123,7 @@ export default async function BlogTestPostPage({
         </article>
       </main>
 
-      <Footer
-        firstName={settings.firstName}
-        lastName={settings.lastName}
-        footerNote={settings.footerNote}
-        socialLinks={socialLinks}
-      />
+      <Footer />
     </>
   );
 }

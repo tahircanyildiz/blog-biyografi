@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { listTestPosts } from "@/lib/blogTest";
-import { getSiteSettings, getSocialLinks } from "@/lib/content";
-import { Nav } from "@/components/site/Nav";
+import { cleanTags } from "@/lib/posts";
+import { SiteHeader } from "@/components/site/SiteHeader";
 import { Footer } from "@/components/site/Footer";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 
@@ -14,19 +14,15 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogTestPage() {
-  const [settings, { data: posts }, socialLinks] = await Promise.all([
-    getSiteSettings(),
-    // Dil filtresi verilmiyor — test hesabında hem TR hem EN yazı
-    // yayınlanabiliyor, hepsi listede görünsün istiyoruz.
-    listTestPosts({ limit: 20 }),
-    getSocialLinks(),
-  ]);
+  // Dil filtresi verilmiyor — test hesabında hem TR hem EN yazı
+  // yayınlanabiliyor, hepsi listede görünsün istiyoruz.
+  const { data: posts } = await listTestPosts({ limit: 20 });
 
   return (
     <>
-      <Nav />
+      <SiteHeader />
 
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <section className="mx-auto max-w-5xl px-6 py-20">
           <RevealOnScroll>
             <p className="text-xs font-medium uppercase tracking-[0.2em] text-accent">
@@ -41,11 +37,11 @@ export default async function BlogTestPage() {
             <p className="mt-8 text-muted">Henüz yayınlanmış yazı yok.</p>
           ) : (
             <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2">
-              {posts.map((post, index) => (
-                <RevealOnScroll key={post.id} delay={Math.min(index * 0.05, 0.2)}>
+              {posts.map((post) => (
+                <RevealOnScroll key={post.id}>
                   <Link
                     href={`/blog-test/${post.slug}`}
-                    className="block overflow-hidden rounded-xl border border-border bg-surface transition-colors hover:border-border-hover"
+                    className="card card-hover block overflow-hidden rounded-2xl"
                   >
                     {post.featured_image && (
                       <div className="relative h-44 w-full overflow-hidden">
@@ -72,9 +68,9 @@ export default async function BlogTestPage() {
                           {post.excerpt}
                         </p>
                       )}
-                      {post.tags.length > 0 && (
+                      {cleanTags(post.tags).length > 0 && (
                         <div className="mt-3 flex flex-wrap gap-2">
-                          {post.tags.slice(0, 3).map((tag) => (
+                          {cleanTags(post.tags).slice(0, 3).map((tag) => (
                             <span
                               key={tag}
                               className="rounded-full border border-border px-2.5 py-0.5 text-xs text-muted"
@@ -93,12 +89,7 @@ export default async function BlogTestPage() {
         </section>
       </main>
 
-      <Footer
-        firstName={settings.firstName}
-        lastName={settings.lastName}
-        footerNote={settings.footerNote}
-        socialLinks={socialLinks}
-      />
+      <Footer />
     </>
   );
 }

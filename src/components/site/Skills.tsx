@@ -1,86 +1,105 @@
-import { Code2, Database, Layers, Wrench } from "lucide-react";
-import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
+import {
+  ChartColumn,
+  ClipboardCheck,
+  Code2,
+  Cpu,
+  Database,
+  FlaskConical,
+  Gauge,
+  GitBranch,
+  Layers,
+  Monitor,
+  Server,
+  ShieldCheck,
+  Smartphone,
+  Workflow,
+  Wrench,
+  type LucideIcon,
+} from "lucide-react";
+import type { SkillGroup } from "@prisma/client";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { DecorativeLine } from "@/components/ui/DecorativeLine";
 import { splitTags } from "@/lib/content";
-
-interface SkillGroupItem {
-  id: string;
-  category: string;
-  subcategory: string;
-  items: string;
-}
+import { tidy } from "@/lib/site";
 
 interface SkillsProps {
-  groups: SkillGroupItem[];
+  groups: SkillGroup[];
 }
 
-const CATEGORY_STYLES = [
-  { border: "border-cat-indigo/30", text: "text-cat-indigo", chip: "border-cat-indigo/30 text-cat-indigo/90" },
-  { border: "border-cat-teal/30", text: "text-cat-teal", chip: "border-cat-teal/30 text-cat-teal/90" },
-  { border: "border-cat-orange/30", text: "text-cat-orange", chip: "border-cat-orange/30 text-cat-orange/90" },
-  { border: "border-cat-blue/30", text: "text-cat-blue", chip: "border-cat-blue/30 text-cat-blue/90" },
+// Kategori adına göre anlamlı ikon — önceden sıra numarasına göre
+// döngüsel atandığı için "Frontend" kartında veritabanı ikonu çıkabiliyordu.
+const ICON_RULES: [RegExp, LucideIcon][] = [
+  [/api\s*test/i, Workflow],
+  [/performans|yük|load|perf/i, Gauge],
+  [/e2e|ui test|uçtan uca/i, ShieldCheck],
+  [/otomasyon|automation/i, Cpu],
+  [/rapor|report/i, ChartColumn],
+  [/yönetim|metodoloji|süreç|management/i, ClipboardCheck],
+  [/yaklaşım|pattern|mimari/i, Layers],
+  [/devops|ci\/cd|\bci\b|\bcd\b|bulut|cloud/i, GitBranch],
+  [/veri|data|veritaban|önbellek|cache/i, Database],
+  [/mobil|mobile/i, Smartphone],
+  [/frontend|arayüz|ön yüz/i, Monitor],
+  [/backend|api|sunucu|server/i, Server],
+  [/araç|tool|proje/i, Wrench],
+  [/test|qa|kalite/i, FlaskConical],
 ];
 
-const CATEGORY_ICONS = [Code2, Database, Layers, Wrench];
+function iconFor(category: string): LucideIcon {
+  return ICON_RULES.find(([pattern]) => pattern.test(category))?.[1] ?? Code2;
+}
 
 export function Skills({ groups }: SkillsProps) {
   if (groups.length === 0) return null;
 
-  const categories = new Map<string, SkillGroupItem[]>();
+  const categories = new Map<string, SkillGroup[]>();
   for (const group of groups) {
-    const list = categories.get(group.category) ?? [];
+    const key = tidy(group.category);
+    const list = categories.get(key) ?? [];
     list.push(group);
-    categories.set(group.category, list);
+    categories.set(key, list);
   }
-  const cards = Array.from(categories.entries());
 
   return (
-    <section id="skills" className="relative mx-auto max-w-5xl px-6 py-20">
-      <DecorativeLine />
+    <section id="skills" aria-labelledby="skills-heading" className="mx-auto max-w-6xl px-6 py-14 md:py-20">
+      <SectionHeading
+        id="skills-heading"
+        eyebrow="Teknik yetkinlikler"
+        title="Yetenekler"
+        description="Günlük işimde kullandığım araçlar, diller ve yöntemler."
+      />
 
-      <RevealOnScroll>
-        <SectionHeading eyebrow="Teknik Yetkinlikler" title="Yetenekler" />
-      </RevealOnScroll>
-
-      <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2">
-        {cards.map(([category, items], index) => {
-          const style = CATEGORY_STYLES[index % CATEGORY_STYLES.length];
-          const Icon = CATEGORY_ICONS[index % CATEGORY_ICONS.length];
+      <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from(categories.entries()).map(([category, items]) => {
+          const Icon = iconFor(category);
 
           return (
-            <RevealOnScroll key={category} delay={Math.min(index * 0.05, 0.2)}>
-              <div className={`h-full rounded-2xl border bg-surface p-6 md:p-8 ${style.border}`}>
-                <div className="flex items-center gap-2 border-b border-border pb-4">
-                  <Icon size={16} className={style.text} aria-hidden />
-                  <h3 className="text-sm font-semibold uppercase tracking-[0.15em] text-ink">
-                    {category}
-                  </h3>
-                </div>
-
-                <div className="mt-5 flex flex-col gap-5">
-                  {items.map((group) => (
-                    <div key={group.id}>
-                      {group.subcategory && (
-                        <p className="mb-2 text-xs uppercase tracking-[0.15em] text-muted">
-                          {group.subcategory}
-                        </p>
-                      )}
-                      <div className="flex flex-wrap gap-2">
-                        {splitTags(group.items).map((skill) => (
-                          <span
-                            key={skill}
-                            className={`rounded-full border px-3 py-1 text-xs font-medium ${style.chip}`}
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+            <div key={category} className="reveal card card-hover p-6">
+              <div className="flex items-center gap-3">
+                <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-accent/12 text-accent-ink ring-1 ring-accent/20">
+                  <Icon size={19} aria-hidden />
+                </span>
+                <h3 className="text-base font-semibold text-ink">{category}</h3>
               </div>
-            </RevealOnScroll>
+
+              <div className="mt-5 flex flex-col gap-4">
+                {items.map((group) => (
+                  <div key={group.id}>
+                    {group.subcategory && (
+                      <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-muted">
+                        {group.subcategory}
+                      </p>
+                    )}
+                    <ul className="flex flex-wrap gap-1.5">
+                      {splitTags(group.items).map((skill) => (
+                        <li key={skill} className="chip">
+                          {skill}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
           );
         })}
       </div>

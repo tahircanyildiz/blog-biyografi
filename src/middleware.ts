@@ -18,7 +18,34 @@ function isProtectedApi(pathname: string): boolean {
   );
 }
 
+/**
+ * SITE_URL "https://www.ornek.com" ise "ornek.com"a gelen istekleri kalıcı
+ * olarak www'ye yönlendirir. Önceden iki alan adı da 200 dönüyordu; Google
+ * aynı sayfanın iki kopyasını görüp sıralama sinyallerini bölüyordu.
+ */
+function canonicalHostRedirect(request: NextRequest): NextResponse | null {
+  const siteUrl = process.env.SITE_URL;
+  if (!siteUrl) return null;
+
+  let canonical: URL;
+  try {
+    canonical = new URL(siteUrl);
+  } catch {
+    return null;
+  }
+
+  const host = request.headers.get("host")?.toLowerCase();
+  if (!host || !canonical.hostname.startsWith("www.")) return null;
+  if (host !== canonical.hostname.slice(4)) return null;
+
+  const target = new URL(`${request.nextUrl.pathname}${request.nextUrl.search}`, canonical.origin);
+  return NextResponse.redirect(target, 308);
+}
+
 export async function middleware(request: NextRequest) {
+  const redirect = canonicalHostRedirect(request);
+  if (redirect) return redirect;
+
   const { pathname } = request.nextUrl;
 
   const isAdminPage = pathname.startsWith("/admin");
@@ -42,15 +69,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/admin/:path*",
-    "/api/content/:path*",
-    "/api/experience/:path*",
-    "/api/projects/:path*",
-    "/api/skills/:path*",
-    "/api/education/:path*",
-    "/api/upload/:path*",
-    "/api/contact-messages/:path*",
-    "/api/social/:path*",
-  ],
+  // Host yönlendirmesi tüm sayfalarda çalışmalı; statik dosyalar hariç.
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

@@ -51,3 +51,6 @@ next-env.d.ts
 
 # prisma generated client (if generated into project)
 /generated
+
+# Yerel araçlar (repo dışı, ayrı git deposu) — örn. claude-seo eklentisi
+/claude-seo/

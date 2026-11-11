@@ -28,4 +28,5 @@ export const blog = new Proxy({} as BlogClient, {
   },
 });
 
-export const SITE_URL = process.env.SITE_URL ?? "http://localhost:3000";
+// Geriye dönük uyumluluk: eski import'lar SITE_URL'i buradan alıyordu.
+export { SITE_URL } from "@/lib/site";

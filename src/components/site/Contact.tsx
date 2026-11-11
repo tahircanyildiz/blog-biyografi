@@ -1,11 +1,9 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Mail, MapPin } from "lucide-react";
-import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { DecorativeLine } from "@/components/ui/DecorativeLine";
-import { getSocialIcon } from "@/lib/social";
+import { CheckCircle2, Mail, MapPin, Send } from "lucide-react";
+import { SocialIcon } from "@/components/ui/SocialIcon";
+import { getSocialMeta } from "@/lib/social";
 
 interface SocialLinkItem {
   id: string;
@@ -20,6 +18,9 @@ interface ContactProps {
 }
 
 type SubmitState = "idle" | "loading" | "success" | "error";
+
+const inputClass =
+  "w-full rounded-xl border border-border bg-bg/60 px-4 py-3 text-ink placeholder:text-muted/70 outline-none transition-colors focus:border-accent-ink focus-visible:outline-none";
 
 export function Contact({ email, location, socialLinks }: ContactProps) {
   const [state, setState] = useState<SubmitState>("idle");
@@ -39,6 +40,7 @@ export function Contact({ email, location, socialLinks }: ContactProps) {
           name: formData.get("name"),
           email: formData.get("email"),
           message: formData.get("message"),
+          website: formData.get("website"),
         }),
       });
 
@@ -52,114 +54,154 @@ export function Contact({ email, location, socialLinks }: ContactProps) {
   }
 
   return (
-    <section id="contact" className="relative mx-auto max-w-5xl px-6 py-20">
-      <DecorativeLine />
+    <section id="contact" aria-labelledby="contact-heading" className="mx-auto max-w-6xl px-6 py-14 md:py-20">
+      <div className="reveal card relative isolate overflow-hidden p-6 sm:p-10 md:p-14">
+        <div aria-hidden className="hero-aurora -z-10 opacity-60" />
 
-      <RevealOnScroll>
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
+        <div className="grid gap-12 md:grid-cols-[1fr_1.1fr]">
           <div>
-            <SectionHeading eyebrow="İletişime Geçin" title="Birlikte Çalışalım" />
-
-            <p className="mt-6 max-w-prose text-muted leading-relaxed">
-              Yeni projeleri, yaratıcı fikirleri konuşmaya her zaman açığım.
-              İletişime geçmekten çekinmeyin!
+            <p className="eyebrow">İletişime geçin</p>
+            <h2
+              id="contact-heading"
+              className="mt-4 font-serif text-4xl font-semibold tracking-tight text-balance text-ink md:text-5xl"
+            >
+              Birlikte çalışalım
+            </h2>
+            <p className="mt-5 max-w-md text-lg leading-relaxed text-ink-2">
+              Yeni bir proje, iş birliği ya da yazılarımla ilgili bir sorunuz mu var? Mesajınızı
+              bırakın, en kısa sürede dönüş yapayım.
             </p>
 
-            <div className="mt-8 flex flex-col gap-4">
+            <ul className="mt-8 flex flex-col gap-3">
               {email && (
-                <a
-                  href={`mailto:${email}`}
-                  className="flex items-center gap-3 text-sm text-ink transition-colors hover:text-accent"
-                >
-                  <Mail size={18} className="text-muted" aria-hidden />
-                  {email}
-                </a>
+                <li>
+                  <a
+                    href={`mailto:${email}`}
+                    className="group inline-flex items-center gap-3 text-ink transition-colors hover:text-accent-ink"
+                  >
+                    <span className="inline-flex size-10 items-center justify-center rounded-xl border border-border bg-surface text-accent-ink">
+                      <Mail size={18} aria-hidden />
+                    </span>
+                    <span className="break-all">{email}</span>
+                  </a>
+                </li>
               )}
               {location && (
-                <div className="flex items-center gap-3 text-sm text-ink">
-                  <MapPin size={18} className="text-muted" aria-hidden />
+                <li className="inline-flex items-center gap-3 text-ink">
+                  <span className="inline-flex size-10 items-center justify-center rounded-xl border border-border bg-surface text-accent-ink">
+                    <MapPin size={18} aria-hidden />
+                  </span>
                   {location}
-                </div>
+                </li>
               )}
-              {socialLinks.map((social) => {
-                const Icon = getSocialIcon(social.platform);
-                return (
-                  <a
-                    key={social.id}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 text-sm text-ink transition-colors hover:text-accent"
-                  >
-                    <Icon size={18} className="text-muted" aria-hidden />
-                    {social.platform}
-                  </a>
-                );
-              })}
-            </div>
+            </ul>
+
+            {socialLinks.length > 0 && (
+              <ul className="mt-8 flex flex-wrap gap-2">
+                {socialLinks.map((social) => {
+                  const meta = getSocialMeta(social.platform);
+                  return (
+                    <li key={social.id}>
+                      <a
+                        href={social.url}
+                        target="_blank"
+                        rel="noopener noreferrer me"
+                        className="chip transition-colors hover:border-accent-ink/60 hover:text-accent-ink"
+                      >
+                        <SocialIcon platform={social.platform} size={15} />
+                        {meta.label}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div>
-              <label htmlFor="name" className="mb-1.5 block text-sm text-ink">
-                İsim
-              </label>
-              <input
-                id="name"
-                name="name"
-                placeholder="İsim"
-                required
-                className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-ink placeholder:text-muted outline-none transition-colors focus-visible:border-border-hover"
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="mb-1.5 block text-sm text-ink">
-                E-posta
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="E-posta"
-                required
-                className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-ink placeholder:text-muted outline-none transition-colors focus-visible:border-border-hover"
-              />
-            </div>
-            <div>
-              <label htmlFor="message" className="mb-1.5 block text-sm text-ink">
-                Mesaj
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                placeholder="Mesaj"
-                required
-                rows={5}
-                className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-ink placeholder:text-muted outline-none transition-colors focus-visible:border-border-hover"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={state === "loading"}
-              className="mt-2 w-full rounded-lg bg-ink px-6 py-3 text-sm font-medium text-bg transition-opacity hover:opacity-90 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+          {state === "success" ? (
+            <div
+              role="status"
+              className="flex flex-col items-center justify-center rounded-2xl border border-border bg-bg/50 p-10 text-center"
             >
-              {state === "loading" ? "Gönderiliyor..." : "Mesajı Gönder"}
-            </button>
+              <CheckCircle2 size={44} aria-hidden className="text-accent-ink" />
+              <p className="mt-4 text-xl font-semibold text-ink">Mesajınız ulaştı, teşekkürler!</p>
+              <p className="mt-2 text-muted">En kısa sürede size dönüş yapacağım.</p>
+              <button
+                type="button"
+                onClick={() => setState("idle")}
+                className="btn btn-secondary btn-sm mt-6"
+              >
+                Yeni mesaj yaz
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-ink">
+                    Adınız
+                  </label>
+                  <input
+                    id="name"
+                    name="name"
+                    autoComplete="name"
+                    placeholder="Ad Soyad"
+                    required
+                    maxLength={120}
+                    className={inputClass}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-ink">
+                    E-posta
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="ornek@eposta.com"
+                    required
+                    maxLength={200}
+                    className={inputClass}
+                  />
+                </div>
+              </div>
+              <div>
+                <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-ink">
+                  Mesajınız
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  placeholder="Kısaca nasıl yardımcı olabileceğimi anlatın…"
+                  required
+                  rows={5}
+                  maxLength={5000}
+                  className={`${inputClass} resize-y`}
+                />
+              </div>
 
-            {state === "success" && (
-              <p className="text-sm text-accent" role="status">
-                Mesajınız gönderildi, teşekkürler!
-              </p>
-            )}
-            {state === "error" && (
-              <p className="text-sm text-red-400" role="alert">
-                Bir hata oluştu, lütfen tekrar deneyin.
-              </p>
-            )}
-          </form>
+              {/* Bot tuzağı (honeypot): insanlar görmez/doldurmaz, botlar doldurur. */}
+              <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
+                <label htmlFor="website">Web siteniz</label>
+                <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+              </div>
+
+              <button type="submit" disabled={state === "loading"} className="btn btn-primary mt-1 w-full disabled:opacity-60">
+                {state === "loading" ? "Gönderiliyor…" : "Mesajı gönder"}
+                <Send size={16} aria-hidden />
+              </button>
+
+              {state === "error" && (
+                <p className="text-sm text-red-500 light:text-red-600" role="alert">
+                  Bir hata oluştu, lütfen tekrar deneyin ya da doğrudan e-posta gönderin.
+                </p>
+              )}
+            </form>
+          )}
         </div>
-      </RevealOnScroll>
+      </div>
     </section>
   );
 }

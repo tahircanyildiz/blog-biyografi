@@ -1,34 +1,16 @@
-"use client";
-
-import { motion, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
 
 interface RevealOnScrollProps {
   children: ReactNode;
   className?: string;
-  delay?: number;
 }
 
-export function RevealOnScroll({
-  children,
-  className,
-  delay = 0,
-}: RevealOnScrollProps) {
-  const shouldReduceMotion = useReducedMotion();
-
-  return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={
-        shouldReduceMotion
-          ? { duration: 0 }
-          : { duration: 0.5, delay, ease: "easeOut" }
-      }
-    >
-      {children}
-    </motion.div>
-  );
+/**
+ * Kaydırınca yumuşakça beliren blok — tamamen CSS (bkz. globals.css `.reveal`,
+ * `animation-timeline: view()`). Önceki Framer Motion sürümü içeriği JS
+ * yüklenene kadar `opacity: 0` tutuyordu; bu da mobilde LCP'yi ~2 sn
+ * geciktiriyordu. Desteklemeyen tarayıcılarda içerik doğrudan görünür.
+ */
+export function RevealOnScroll({ children, className = "" }: RevealOnScrollProps) {
+  return <div className={`reveal ${className}`}>{children}</div>;
 }

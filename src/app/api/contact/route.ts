@@ -4,6 +4,13 @@ import { sendContactNotification } from "@/lib/mailer";
 
 export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null);
+
+  // Honeypot: formdaki gizli "website" alanını sadece botlar doldurur.
+  // Bota başarılı gibi görünüp mesajı kaydetmeden/mail atmadan dönüyoruz.
+  if (typeof body?.website === "string" && body.website.trim() !== "") {
+    return NextResponse.json({ ok: true }, { status: 201 });
+  }
+
   const name = typeof body?.name === "string" ? body.name.trim() : "";
   const email = typeof body?.email === "string" ? body.email.trim() : "";
   const message = typeof body?.message === "string" ? body.message.trim() : "";

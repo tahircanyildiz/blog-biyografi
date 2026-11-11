@@ -1,24 +1,7 @@
-import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
+import type { Experience as ExperienceItem } from "@prisma/client";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { DecorativeLine } from "@/components/ui/DecorativeLine";
 import { splitTags } from "@/lib/content";
-
-interface ExperienceItem {
-  id: string;
-  role: string;
-  company: string;
-  employment: string;
-  startDate: string;
-  endDate: string;
-  description: string;
-  tags: string;
-  stat1Label: string;
-  stat1Value: string;
-  stat2Label: string;
-  stat2Value: string;
-  stat3Label: string;
-  stat3Value: string;
-}
+import { isOngoing, tidy } from "@/lib/site";
 
 interface ExperienceProps {
   items: ExperienceItem[];
@@ -28,75 +11,90 @@ export function Experience({ items }: ExperienceProps) {
   if (items.length === 0) return null;
 
   return (
-    <section id="experience" className="relative mx-auto max-w-5xl px-6 py-20">
-      <DecorativeLine />
+    <section
+      id="experience"
+      aria-labelledby="experience-heading"
+      className="mx-auto max-w-6xl px-6 py-14 md:py-20"
+    >
+      <SectionHeading id="experience-heading" eyebrow="Çalışma geçmişi" title="Deneyim" />
 
-      <RevealOnScroll>
-        <SectionHeading eyebrow="Çalışma Geçmişi" title="Deneyim" />
-      </RevealOnScroll>
-
-      <div className="mt-16 space-y-10 border-l border-border pl-8">
-        {items.map((exp, index) => {
+      <ol className="relative mt-12 space-y-6 border-l border-border pl-7 md:ml-2 md:pl-10">
+        {items.map((exp) => {
+          const ongoing = isOngoing(exp.endDate);
           const stats = [
             { label: exp.stat1Label, value: exp.stat1Value },
             { label: exp.stat2Label, value: exp.stat2Value },
             { label: exp.stat3Label, value: exp.stat3Value },
-          ].filter((s) => s.label && s.value);
+          ].filter((stat) => stat.label && stat.value);
+          const meta = [tidy(exp.company), tidy(exp.employment)].filter(Boolean);
 
           return (
-            <RevealOnScroll key={exp.id} delay={Math.min(index * 0.05, 0.2)}>
-              <div className="relative">
-                <span className="absolute -left-[2.55rem] top-8 h-3 w-3 rounded-full border-2 border-ink bg-bg" />
+            <li key={exp.id} className="reveal relative">
+              <span
+                aria-hidden
+                className={`absolute -left-[calc(1.75rem+6.5px)] top-8 size-3 rounded-full ring-4 ring-bg md:-left-[calc(2.5rem+6.5px)] ${
+                  ongoing ? "bg-accent shadow-[0_0_0_6px] shadow-accent/25" : "bg-border-hover"
+                }`}
+              />
 
-                <p className="mb-3 text-xs uppercase tracking-[0.15em] text-muted">
-                  {exp.startDate} – {exp.endDate}
-                </p>
-
-                <div className="rounded-2xl bg-surface p-6 md:p-8">
-                  <h3 className="text-lg font-semibold text-ink">{exp.role}</h3>
-                  {(exp.company || exp.employment) && (
-                    <p className="mt-1 text-sm text-muted">
-                      {[exp.company, exp.employment].filter(Boolean).join(" · ")}
-                    </p>
-                  )}
-
-                  {exp.description && (
-                    <p className="mt-4 max-w-prose text-muted leading-relaxed">
-                      {exp.description}
-                    </p>
-                  )}
-
-                  {exp.tags && (
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {splitTags(exp.tags).map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded-full border border-border px-3 py-1 text-xs text-muted"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  {stats.length > 0 && (
-                    <div className="mt-6 flex flex-wrap gap-6 border-t border-border pt-4">
-                      {stats.map((stat) => (
-                        <div key={stat.label}>
-                          <div className="text-base font-semibold text-ink">
-                            {stat.value}
-                          </div>
-                          <div className="text-xs text-muted">{stat.label}</div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+              <article className="card card-hover p-6 md:p-8">
+                <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
+                  <div className="min-w-0">
+                    <h3 className="text-xl font-semibold text-ink">{tidy(exp.role)}</h3>
+                    {meta.length > 0 && (
+                      <p className="mt-1 text-sm text-muted">
+                        {meta.map((part, index) => (
+                          <span key={part}>
+                            {index > 0 && <span aria-hidden> · </span>}
+                            <span className={index === 0 ? "font-medium text-ink-2" : "capitalize"}>
+                              {part}
+                            </span>
+                          </span>
+                        ))}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {ongoing && (
+                      <span className="rounded-full bg-accent/15 px-2.5 py-1 text-xs font-semibold text-accent-ink">
+                        Güncel
+                      </span>
+                    )}
+                    <span className="chip font-mono text-xs">
+                      {tidy(exp.startDate)} – {tidy(exp.endDate)}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </RevealOnScroll>
+
+                {exp.description && (
+                  <p className="mt-5 max-w-3xl leading-relaxed text-ink-2">{tidy(exp.description)}</p>
+                )}
+
+                {exp.tags && (
+                  <ul className="mt-5 flex flex-wrap gap-2" aria-label="Kullanılan teknolojiler">
+                    {splitTags(exp.tags).map((tag) => (
+                      <li key={tag} className="chip">
+                        {tag}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {stats.length > 0 && (
+                  <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-4 border-t border-border pt-5">
+                    {stats.map((stat) => (
+                      <div key={stat.label} className="flex flex-col">
+                        <dt className="order-2 text-xs text-muted">{stat.label}</dt>
+                        <dd className="order-1 font-serif text-2xl font-semibold text-ink">{stat.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+              </article>
+            </li>
           );
         })}
-      </div>
+      </ol>
     </section>
   );
 }

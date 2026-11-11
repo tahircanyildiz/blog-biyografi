@@ -9,8 +9,8 @@ site içeriğinin geri kalanı (`Hero`, `Experience`, `Projects`, `Skills`,
 ## Teknoloji Yığını
 
 - Next.js 15 / React 19 / TypeScript (strict)
-- Tailwind CSS v4 (`globals.css` içinde `@theme` token'ları)
-- `motion` (Framer Motion) animasyonlar için
+- Tailwind CSS v4 (`globals.css` içinde `@theme` token'ları, açık/koyu tema)
+- Animasyonlar saf CSS (scroll-driven `animation-timeline`) — JS kütüphanesi yok
 - Prisma + SQLite (dosya tabanlı veritabanı — site içeriği için)
 - `@lobsterlead/blog-sdk` (blog içeriği için, harici Lobster Lead servisi)
 - `lucide-react` ikonlar
@@ -114,10 +114,31 @@ altında render edilir (`src/app/blog/[slug]/page.tsx`). Bu class'ın stilleri
 tanımlıdır — Lobster Lead tarafından üretilen `ll-*` class adları
 **değiştirilmemelidir** (blog servisi bu adlara göre HTML üretir).
 
-SEO: her post için `generateMetadata` ile `<title>`, meta description,
-canonical, Open Graph/Twitter tag'leri ve `BlogPosting` JSON-LD otomatik
-üretilir; `src/app/sitemap.ts` aynı origin'de (`SITE_URL`) blog yazılarını da
-içeren bir sitemap sunar.
+## SEO ve Görünürlük
+
+| Ne | Nerede |
+| --- | --- |
+| Sayfa başlığı/açıklaması (ana sayfa + blog) | `/admin/seo` — boşsa ad/unvan/bio'dan otomatik üretilir (`src/lib/seo.ts`) |
+| Canonical, Open Graph, Twitter kartları, RSS keşif linki | Her sayfanın `generateMetadata`'sı |
+| Paylaşım görselleri (1200×630, Türkçe font destekli) | `src/app/opengraph-image.tsx`, `src/app/blog/opengraph-image.tsx` |
+| JSON-LD: `Person`, `WebSite`, `ProfilePage`, `Blog`, `BlogPosting` (yazar = Person), `BreadcrumbList` | `src/lib/seo.ts` |
+| `/robots.txt`, `/sitemap.xml` (görsel ve `lastmod` ile), `/rss.xml`, `/llms.txt`, `/manifest.webmanifest` | `src/app/` altındaki aynı adlı route'lar |
+| `domain.com` → `www.domain.com` kalıcı yönlendirme | `src/middleware.ts` (`SITE_URL` www ile başlıyorsa) |
+| Blog arama sonuçları (`/blog?q=`) | `noindex, follow` |
+
+Yayın sonrası: Google Search Console'da site doğrulandıktan sonra
+`/sitemap.xml` adresini gönderin; Bing Webmaster Tools'a da aynı sitemap
+eklenebilir.
+
+### Görseller
+
+- Görsel optimizasyonu açık (`next.config.ts`): profil fotoğrafı ve blog
+  kapakları cihaz boyutuna göre WebP olarak sunulur. `sharp`'ın Alpine ikilisi
+  `package-lock.json`'da mevcut, ek kurulum gerekmez.
+- Admin panelden yüklenen görseller `src/app/uploads/[file]/route.ts`
+  üzerinden servis edilir. (Next.js production'da `public/` klasörünü yalnızca
+  açılışta taradığı için önceden yeni yüklemeler restart'a kadar 404
+  veriyordu.)
 
 ## Proje Yapısı
 
@@ -128,7 +149,10 @@ src/lib/                    Prisma client, auth (HMAC session), blog SDK client
 src/app/                    Ana sayfa, /blog (Lobster Lead SDK), /admin, sitemap
 src/components/site/        Ana sayfa bölümleri (Hero, Experience, Projects, ...)
 src/components/admin/       Admin panel form bileşenleri
-src/components/ui/          Paylaşılan UI yardımcıları (RevealOnScroll, GlowCard)
+src/components/ui/          Paylaşılan UI yardımcıları (RevealOnScroll, GlowCard, JsonLd, SocialIcon)
+src/lib/seo.ts              Metadata varsayılanları + JSON-LD üreticileri
+src/lib/posts.ts            Yazı listesi (istek başına önbellekli), sayfalama, arama
+public/fonts/og/            Paylaşım görselleri için Inter/Fraunces (OFL lisanslı)
 ```
 
 ## Kabul Kriterleri Kontrolü
@@ -139,6 +163,7 @@ src/components/ui/          Paylaşılan UI yardımcıları (RevealOnScroll, Glo
 - `/blog` ve `/blog/[slug]` Lobster Lead servisinden veri çekip render ediyor;
   olmayan bir slug için gerçek `404` dönüyor
 - `/sitemap.xml` açılıyor, blog yazılarını same-origin URL'lerle içeriyor
+- `/robots.txt`, `/rss.xml`, `/llms.txt`, `/opengraph-image` 200 dönüyor
 - `prefers-reduced-motion` açıkken animasyonlar devre dışı kalıyor
 - Mobilde (375px) yatay taşma yok
 - `docker compose up -d --build` sonrası site ayağa kalkıyor, SQLite dosyası
