@@ -16,6 +16,13 @@ const nextConfig: NextConfig = {
         hostname: "storage.googleapis.com",
         pathname: "/lobsterlead-storage/**",
       },
+      // Elle yazılan blog yazılarının kapakları sitenin kendi /uploads
+      // klasöründe barındırılıyor (Google Görseller'de itibar bu alan adına).
+      {
+        protocol: "https",
+        hostname: "www.tahircanyildiz.com",
+        pathname: "/uploads/**",
+      },
     ],
     minimumCacheTTL: 60 * 60 * 24 * 30,
     // Varsayılan 16 genişlik yerine 9: her <img> srcset'i (HTML'e iki kez
