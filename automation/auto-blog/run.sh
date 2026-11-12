@@ -6,10 +6,9 @@
 #   zsh automation/auto-blog/run.sh --kontrol     → sadece ortamı kontrol et, yazı üretme
 #   zsh automation/auto-blog/run.sh --onay        → bekleyen taslak için yayın onay penceresini aç
 #
-# Zamanlayıcı her 30 dakikada bir ve Mac açıldığında bu betiği --zamanlayici ile çağırır. Yazı;
-# saat 09:00'u geçtiyse, bugün taslak yoksa ve (bugün Paz/Pzt/Çar/Cum ise ya da son taslak 2 günden
-# eskiyse) üretilir. Böylece Mac sabah kapalı olsa bile açıldığında telafi edilir. Hata olursa günde
-# en fazla 2 deneme yapılır.
+# Zamanlayıcı her 30 dakikada bir ve Mac açıldığında bu betiği --zamanlayici ile çağırır. Her gün,
+# saat 09:00'u geçtiyse ve bugün henüz taslak yoksa bir yazı üretilir. Böylece Mac sabah kapalı olsa
+# bile açıldığında o günün yazısı hazırlanır. Hata olursa günde en fazla 2 deneme yapılır.
 # Yalnızca TASLAK oluşturur; yayınlamak için publish.sh kullanılır.
 #
 # Not: macOS, launchd işlerinin Masaüstü klasörüne erişimini engeller. Bu yüzden zamanlayıcı
@@ -93,20 +92,15 @@ latest_unpublished() {
   done
 }
 
-# Yazı zamanı geldi mi? (yalnızca --zamanlayici modunda kullanılır)
+# Yazı zamanı geldi mi? (yalnızca --zamanlayici modunda kullanılır) — her gün bir yazı
 is_due() {
-  local hour dow attempts last last_s now_s
-  hour=$(date +%H); dow=$(date +%w)
+  local hour attempts
+  hour=$(date +%H)
   (( 10#$hour >= 9 )) || return 1                              # 09:00'dan önce değil
   ls -d "$drafts/$today-"* >/dev/null 2>&1 && return 1         # bugün zaten taslak var
   attempts=$(cat "$logs/$today.attempts" 2>/dev/null || echo 0)
   (( attempts < 2 )) || return 1                               # bugün 2 kez denendi
-  [[ $dow == (0|1|3|5) ]] && return 0                          # planlı gün: Paz, Pzt, Çar, Cum
-  # Planlı gün değil: son taslak 2 günden eskiyse kaçırılan günü telafi et
-  last=$(ls -d "$drafts"/20??-??-??-* 2>/dev/null | sed -E 's#.*/([0-9]{4}-[0-9]{2}-[0-9]{2})-.*#\1#' | sort | tail -1)
-  [[ -z $last ]] && return 0
-  last_s=$(date -j -f %Y-%m-%d "$last" +%s); now_s=$(date -j -f %Y-%m-%d "$today" +%s)
-  (( (now_s - last_s) / 86400 >= 2 ))
+  return 0
 }
 
 mkdir -p "$drafts" "$logs"

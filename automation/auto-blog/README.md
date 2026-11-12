@@ -1,8 +1,8 @@
 # Otomatik blog taslakları
 
-macOS zamanlayıcısı (launchd) Mac açıldığında ve her 30 dakikada bir kısa bir kontrol yapar. Saat 09:00'u
-geçtiyse, bugün taslak yoksa ve bugün Pazar/Pazartesi/Çarşamba/Cuma ise (ya da son taslak 2 günden eskiyse)
-Claude Code'u arka planda çalıştırır; Mac sabah kapalı olsa bile açıldığında telafi edilir. Ajan güncel bir konu seçer, resmi kaynaklardan doğrular, yazıyı ve 3 görseli hazırlar ve
+macOS zamanlayıcısı (launchd) Mac açıldığında ve her 30 dakikada bir kısa bir kontrol yapar. Her gün, saat
+09:00'u geçtiyse ve o gün henüz taslak yoksa Claude Code'u arka planda çalıştırır; Mac sabah kapalı olsa bile
+açıldığında o günün yazısı hazırlanır. Ajan güncel bir konu seçer, resmi kaynaklardan doğrular, yazıyı ve 3 görseli hazırlar ve
 LobsterLead'e **taslak** olarak ekler. Bitince ekrana "Yayınla / Önizle / Sonra" penceresi gelir; yayın
 yalnızca "Yayınla"ya basılınca yapılır (şirket kuralı: canlıya her değişiklik için açık onay).
 

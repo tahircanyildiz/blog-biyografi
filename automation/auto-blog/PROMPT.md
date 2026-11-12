@@ -23,7 +23,7 @@ node automation/auto-blog/lib/existing-posts.mjs
 Ayrıca `{{AUTOBLOG_HOME}}/topics-log.md` dosyasını oku (planlanan ve önceki taslaklar). Bunlarla aynı konuyu tekrar yazma; ama iç link verebileceğin 1-2 ilgili yazıyı not et.
 
 ### 2. Güncel bir konu seç
-- **Zaman:** son 14 gün içinde çıkmış ya da gündeme gelmiş bir gelişme (bugünün tarihini `date` ile al).
+- **Zaman:** son 14 gün içinde çıkmış ya da gündeme gelmiş bir gelişme (bugünün tarihini `date` ile al). Blog her gün yazı yayımlıyor; son 14 günde yazılmamış değerli bir gelişme kalmadıysa son 30 güne genişlet.
 - **Alanlar (dönüşümlü seç; son iki yazının alanını tekrarlama):** backend (Node.js, .NET/C#, API tasarımı, veritabanı, güvenlik), frontend (React, Next.js, TypeScript, web platformu), yapay zekâ (LLM, AI ajanları, MCP, kodlama ajanları, sesli asistanlar/speech AI), test otomasyonu (Playwright, Cypress, CI/CD, test stratejisi).
 - **İyi konu örnekleri:** yeni major/minor sürüm ve geçiş rehberi, güvenlik bülteni ve etkisi, spesifikasyon değişikliği, yaygın kullanılan bir aracın önemli yeniliği, sektörü etkileyen bir duyuru.
 - **Keşif:** WebSearch ile ara ("<teknoloji> release November 2026", "security advisory", "changelog" vb.); sonra mutlaka birincil kaynağa git. Sayfaları WebFetch ile oku. GitHub için yalnızca okuma yapan sarmalayıcıyı kullan:
