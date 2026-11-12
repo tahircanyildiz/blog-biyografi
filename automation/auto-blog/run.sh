@@ -30,9 +30,15 @@ claude_bin=$(ls -d "$HOME"/.vscode/extensions/anthropic.claude-code-*/resources/
 # Yoksa Claude Code'un normal oturumu kullanılır (o da birkaç günde bir yenilenmeli).
 has_token=0
 if token=$(security find-generic-password -s autoblog-claude-token -w 2>/dev/null) && [[ -n $token ]]; then
-  export CLAUDE_CODE_OAUTH_TOKEN=$token
-  has_token=1
+  # Yanlışlıkla boş/hatalı bir değer kaydedildiyse kullanma; normal oturuma düş
+  if [[ $token == sk-ant-oat* && ${#token} -gt 40 ]]; then
+    export CLAUDE_CODE_OAUTH_TOKEN=$token
+    has_token=1
+  else
+    has_token=2
+  fi
 fi
+unset token
 
 notify() {
   osascript -e "display notification \"$2\" with title \"Blog otomasyonu\" subtitle \"$1\" sound name \"Glass\"" >/dev/null 2>&1 || true
@@ -57,7 +63,11 @@ if [[ ${1:-} == "--kontrol" ]]; then
     echo "chrome: $([[ -x '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' ]] && echo var || echo YOK)"
     echo "gh: $(command -v gh || echo YOK)"
     echo ".env blog anahtarı: $(grep -c '^BLOG_API_KEY=.' "$root/.env" 2>/dev/null || echo 0)"
-    echo "uzun ömürlü token: $([[ $has_token == 1 ]] && echo var || echo 'yok (normal oturum kullanılacak)')"
+    case $has_token in
+      1) echo "uzun ömürlü token: var" ;;
+      2) echo "uzun ömürlü token: Anahtar Zinciri'ndeki kayıt GEÇERSİZ (yok sayıldı, normal oturum kullanılacak)" ;;
+      *) echo "uzun ömürlü token: yok (normal oturum kullanılacak)" ;;
+    esac
     echo "taslak klasörü: $drafts"
   } | tee -a "$log"
   exit 0
