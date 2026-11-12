@@ -5,6 +5,7 @@
 #   npm run blog:yayinla -- <slug>        → belirli bir taslak
 #   npm run blog:yayinla -- <slug> --evet → onay sormadan
 set -euo pipefail
+setopt no_nomatch  # eşleşmeyen dosya kalıpları hata vermesin
 
 here=${0:A:h}
 root=${here:h:h}

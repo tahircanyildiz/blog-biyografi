@@ -1,14 +1,22 @@
 #!/bin/zsh
 # Otomatik blog taslağı üretir. macOS zamanlayıcısı (launchd) tarafından çalıştırılır.
-#   zsh automation/auto-blog/run.sh            → normal çalıştırma (günde en fazla bir taslak)
-#   zsh automation/auto-blog/run.sh --force    → bugün taslak olsa da yenisini dene
-#   zsh automation/auto-blog/run.sh --kontrol  → sadece ortamı kontrol et, yazı üretme
+#   zsh automation/auto-blog/run.sh               → elle çalıştırma (günde en fazla bir taslak)
+#   zsh automation/auto-blog/run.sh --zamanlayici → launchd'nin kullandığı mod: önce "yazı zamanı geldi mi?" kontrolü
+#   zsh automation/auto-blog/run.sh --force       → bugün taslak olsa da yenisini dene
+#   zsh automation/auto-blog/run.sh --kontrol     → sadece ortamı kontrol et, yazı üretme
+#   zsh automation/auto-blog/run.sh --onay        → bekleyen taslak için yayın onay penceresini aç
+#
+# Zamanlayıcı her 30 dakikada bir ve Mac açıldığında bu betiği --zamanlayici ile çağırır. Yazı;
+# saat 09:00'u geçtiyse, bugün taslak yoksa ve (bugün Paz/Pzt/Çar/Cum ise ya da son taslak 2 günden
+# eskiyse) üretilir. Böylece Mac sabah kapalı olsa bile açıldığında telafi edilir. Hata olursa günde
+# en fazla 2 deneme yapılır.
 # Yalnızca TASLAK oluşturur; yayınlamak için publish.sh kullanılır.
 #
 # Not: macOS, launchd işlerinin Masaüstü klasörüne erişimini engeller. Bu yüzden zamanlayıcı
 # bu betiği ~/.autoblog/biografi-blog altındaki ayrı kopyadan çalıştırır; taslaklar, loglar ve
 # konu kaydı ~/.autoblog altında tutulur.
 set -uo pipefail
+setopt no_nomatch  # eşleşmeyen dosya kalıpları hata vermesin (yoksa "boş" sonuç döner)
 
 here=${0:A:h}
 root=${here:h:h}
@@ -85,10 +93,32 @@ latest_unpublished() {
   done
 }
 
+# Yazı zamanı geldi mi? (yalnızca --zamanlayici modunda kullanılır)
+is_due() {
+  local hour dow attempts last last_s now_s
+  hour=$(date +%H); dow=$(date +%w)
+  (( 10#$hour >= 9 )) || return 1                              # 09:00'dan önce değil
+  ls -d "$drafts/$today-"* >/dev/null 2>&1 && return 1         # bugün zaten taslak var
+  attempts=$(cat "$logs/$today.attempts" 2>/dev/null || echo 0)
+  (( attempts < 2 )) || return 1                               # bugün 2 kez denendi
+  [[ $dow == (0|1|3|5) ]] && return 0                          # planlı gün: Paz, Pzt, Çar, Cum
+  # Planlı gün değil: son taslak 2 günden eskiyse kaçırılan günü telafi et
+  last=$(ls -d "$drafts"/20??-??-??-* 2>/dev/null | sed -E 's#.*/([0-9]{4}-[0-9]{2}-[0-9]{2})-.*#\1#' | sort | tail -1)
+  [[ -z $last ]] && return 0
+  last_s=$(date -j -f %Y-%m-%d "$last" +%s); now_s=$(date -j -f %Y-%m-%d "$today" +%s)
+  (( (now_s - last_s) / 86400 >= 2 ))
+}
+
 mkdir -p "$drafts" "$logs"
 [[ -f $topics ]] || cp "$here/topics-log.md" "$topics"
 today=$(date +%Y-%m-%d)
 log="$logs/$today.log"
+
+# Zamanlayıcı modu: başka çalıştırma sürüyorsa ya da yazı zamanı gelmediyse sessizce çık
+if [[ ${1:-} == "--zamanlayici" ]]; then
+  [[ -d $home_dir/.lock ]] && exit 0
+  is_due || exit 0
+fi
 
 # Ayrı kopyadan çalışıyorsak en güncel talimat ve betikleri çek
 if [[ $root == "$home_dir/biografi-blog" ]]; then
@@ -142,7 +172,9 @@ if ls -d "$drafts/$today-"* >/dev/null 2>&1 && [[ ${1:-} != "--force" ]]; then
   exit 0
 fi
 
-echo "=== $(date) başladı ($claude_bin)" >> "$log"
+attempts=$(( $(cat "$logs/$today.attempts" 2>/dev/null || echo 0) + 1 ))
+echo $attempts > "$logs/$today.attempts"
+echo "=== $(date) başladı, bugünkü $attempts. deneme ($claude_bin)" >> "$log"
 
 prompt=$(<"$here/PROMPT.md")
 prompt=${prompt//\{\{AUTOBLOG_HOME\}\}/$home_dir}
