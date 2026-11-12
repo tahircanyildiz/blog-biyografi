@@ -40,8 +40,11 @@ if token=$(security find-generic-password -s autoblog-claude-token -w 2>/dev/nul
 fi
 unset token
 
+# Kalıcı bilgi penceresi: macOS bildirimleri birkaç saniyede kaybolduğu ve ayarı her sürümde
+# bulunamadığı için pencere kullanılır. "Tamam"a basılana kadar (en fazla 20 saat) ekranda kalır.
 notify() {
-  osascript -e "display notification \"$2\" with title \"Blog otomasyonu\" subtitle \"$1\" sound name \"Glass\"" >/dev/null 2>&1 || true
+  local title=${1//\"/\\\"} body=${2//\"/\\\"}
+  osascript -e "display dialog \"$body\" with title \"Blog otomasyonu — $title\" buttons {\"Tamam\"} default button \"Tamam\" with icon note giving up after 72000" >/dev/null 2>&1 || true
 }
 
 # Taslağı yayınlamak için tek tıkla onay penceresi. Yayın yalnızca "Yayınla"ya basılırsa yapılır
@@ -65,7 +68,7 @@ ask_publish() {
         open "$dir/preview.html"
         ;;
       *)
-        notify "Taslak bekliyor" "$title — onay penceresi için: npm run blog:onay"
+        # "Sonra" ya da 20 saat yanıt yok: taslak bekler (pencereyi tekrar açmak için: npm run blog:onay)
         return
         ;;
     esac
