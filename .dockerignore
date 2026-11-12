@@ -9,3 +9,4 @@ public/uploads/*
 .env.local
 npm-debug.log*
 claude-seo
+automation

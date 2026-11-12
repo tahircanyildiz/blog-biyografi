@@ -54,3 +54,8 @@ next-env.d.ts
 
 # Yerel araçlar (repo dışı, ayrı git deposu) — örn. claude-seo eklentisi
 /claude-seo/
+
+# Otomatik blog taslakları ve log dosyaları (yerel)
+/automation/auto-blog/drafts/
+/automation/auto-blog/logs/
+/automation/auto-blog/.lock/

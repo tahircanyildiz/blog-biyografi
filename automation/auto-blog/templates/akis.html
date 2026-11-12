@@ -1,0 +1,36 @@
+<!doctype html>
+<!-- AKIŞ ŞEMASI ŞABLONU — bir sürecin adımları için (3-5 adım).
+     Genişlik 1600; yüksekliği içeriğe göre ayarlayın. Doğru/yanlış karşılaştırması gerekiyorsa
+     iki .row kullanıp birini .bad sınıfıyla işaretleyin (rengin yanında ✓/✕ ve metin de olsun). -->
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="base.css">
+<style>
+  body { width: 1600px; height: 700px; background: var(--surface); padding: 60px 70px; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 46px; letter-spacing: -0.015em; }
+  .lead { font-size: 23px; color: var(--muted); margin-top: 12px; }
+  .row { display: flex; align-items: stretch; margin-top: 44px; }
+  .step { flex: 1; background: var(--surface-2); border: 1.5px solid var(--border); border-radius: 20px; padding: 26px 24px; display: flex; flex-direction: column; gap: 12px; }
+  .num { font-size: 18px; font-weight: 600; letter-spacing: 0.12em; color: var(--accent-ink); }
+  .title { font-size: 28px; font-weight: 600; }
+  .desc { font-size: 20px; color: var(--ink-2); line-height: 1.45; }
+  .cmd { margin-top: auto; font-family: var(--mono); font-size: 18px; color: var(--accent-2); background: rgba(10,13,20,0.7); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .arr { width: 56px; display: flex; align-items: center; justify-content: center; color: var(--accent-ink); font-size: 34px; }
+  .result { margin-top: 32px; display: flex; align-items: center; gap: 18px; border: 1.5px solid rgba(34,163,204,0.55); background: rgba(34,163,204,0.08); border-radius: 18px; padding: 20px 26px; font-size: 23px; }
+  .check { width: 38px; height: 38px; border-radius: 50%; background: var(--series-2); color: #0a0d14; display: inline-flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; flex-shrink: 0; }
+</style>
+</head>
+<body>
+  <h2>Süreç nasıl işler?</h2>
+  <p class="lead">Tek cümlelik açıklama.</p>
+  <div class="row">
+    <div class="step"><span class="num">01 · ADIM</span><span class="title">Başlık</span><span class="desc">Açıklama</span><span class="cmd">komut veya örnek</span></div>
+    <div class="arr">→</div>
+    <div class="step"><span class="num">02 · ADIM</span><span class="title">Başlık</span><span class="desc">Açıklama</span><span class="cmd">komut veya örnek</span></div>
+    <div class="arr">→</div>
+    <div class="step"><span class="num">03 · ADIM</span><span class="title">Başlık</span><span class="desc">Açıklama</span><span class="cmd">komut veya örnek</span></div>
+  </div>
+  <div class="result"><span class="check">✓</span><span>Sonuç cümlesi</span></div>
+</body>
+</html>

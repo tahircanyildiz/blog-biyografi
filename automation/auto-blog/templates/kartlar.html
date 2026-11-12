@@ -1,0 +1,37 @@
+<!doctype html>
+<!-- KART IZGARASI ŞABLONU — karşılaştırma, "hangi sürüm", "kimler etkilenir" gibi bilgiler için.
+     Genişlik 1600; yüksekliği içeriğe göre ayarlayın (body height ile --window-size aynı olmalı).
+     Kart sayısı 2-4 arası; .cols içindeki repeat(N, 1fr) değerini kart sayısına göre değiştirin. -->
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="base.css">
+<style>
+  body { width: 1600px; height: 740px; background: var(--surface); padding: 60px 70px; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: 46px; letter-spacing: -0.015em; }
+  .lead { font-size: 23px; color: var(--muted); margin-top: 10px; }
+  .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; margin-top: 40px; }
+  .card { border: 1.5px solid var(--border); background: var(--surface-2); border-radius: 22px; padding: 30px 28px; display: flex; flex-direction: column; gap: 14px; }
+  .label { font-size: 18px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .title { font-family: var(--mono); font-size: 32px; color: var(--ink); }
+  .desc { font-size: 20px; color: var(--ink-2); }
+  .target { font-family: var(--mono); font-size: 28px; color: var(--accent-2); border: 1.5px solid rgba(95,208,243,0.45); background: rgba(95,208,243,0.07); border-radius: 14px; padding: 14px 18px; }
+  .target small { display: block; font-family: var(--sans); font-size: 17px; color: var(--muted); margin-top: 4px; }
+  .warn .target { color: var(--amber); border-color: rgba(245,177,76,0.5); background: rgba(245,177,76,0.07); }
+  ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  li { font-size: 19px; color: var(--ink-2); line-height: 1.4; padding-left: 22px; position: relative; }
+  li::before { content: ""; position: absolute; left: 0; top: 10px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
+  .foot { margin-top: 30px; border: 1.5px solid var(--border); border-radius: 16px; padding: 16px 22px; font-size: 19px; color: var(--ink-2); }
+</style>
+</head>
+<body>
+  <h2>Görselin başlığı</h2>
+  <p class="lead">Tek cümlelik açıklama.</p>
+  <div class="cols">
+    <div class="card"><span class="label">Etiket</span><span class="title">Başlık 1</span><span class="desc">Kısa açıklama</span><div class="target">Sonuç<small>ek not</small></div><ul><li>Madde</li><li>Madde</li></ul></div>
+    <div class="card"><span class="label">Etiket</span><span class="title">Başlık 2</span><span class="desc">Kısa açıklama</span><div class="target">Sonuç<small>ek not</small></div><ul><li>Madde</li></ul></div>
+    <div class="card warn"><span class="label">Etiket</span><span class="title">Başlık 3</span><span class="desc">Kısa açıklama</span><div class="target">Uyarı<small>ek not</small></div><ul><li>Madde</li></ul></div>
+  </div>
+  <div class="foot">Kaynak: resmi kaynak adı</div>
+</body>
+</html>

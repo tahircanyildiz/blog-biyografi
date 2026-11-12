@@ -1,0 +1,42 @@
+/* Blog görselleri için ortak stil: sitenin OG fontları ve lacivert paleti.
+   render.sh bu dosyayı ve public/fonts/og fontlarını görselin yanına kopyalar. */
+@font-face { font-family: "FrauncesL"; src: url("fonts/fraunces-latin-600-normal.woff") format("woff"); font-weight: 600; }
+@font-face { font-family: "FrauncesX"; src: url("fonts/fraunces-latin-ext-600-normal.woff") format("woff"); font-weight: 600; }
+@font-face { font-family: "InterL"; src: url("fonts/inter-latin-400-normal.woff") format("woff"); font-weight: 400; }
+@font-face { font-family: "InterL"; src: url("fonts/inter-latin-600-normal.woff") format("woff"); font-weight: 600; }
+@font-face { font-family: "InterX"; src: url("fonts/inter-latin-ext-400-normal.woff") format("woff"); font-weight: 400; }
+@font-face { font-family: "InterX"; src: url("fonts/inter-latin-ext-600-normal.woff") format("woff"); font-weight: 600; }
+
+:root {
+  --bg: #0a0d14;
+  --surface: #10141e;
+  --surface-2: #171c29;
+  --border: #222a3a;
+  --border-hover: #34405a;
+  --ink: #eef2f8;
+  --ink-2: #cdd5e2;
+  --muted: #9aa4b8;
+  --accent: #3b5bdb;
+  --accent-ink: #93a8fb;
+  --accent-2: #5fd0f3;
+  --amber: #f5b14c;
+  --ok: #3fb37f;
+  --bad: #e5675e;
+  /* Grafiklerde iki seri için doğrulanmış renkler (koyu zemin) */
+  --series-1: #3b5bdb;
+  --series-2: #22a3cc;
+  --serif: "FrauncesL", "FrauncesX", Georgia, serif;
+  --sans: "InterL", "InterX", -apple-system, system-ui, sans-serif;
+  --mono: "SF Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+code, .mono { font-family: var(--mono); }
