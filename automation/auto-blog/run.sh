@@ -45,12 +45,12 @@ notify() {
 }
 
 # Taslağı yayınlamak için tek tıkla onay penceresi. Yayın yalnızca "Yayınla"ya basılırsa yapılır
-# (şirket kuralı: canlıya her değişiklik için açık onay). Pencere 1 saat yanıtsız kalırsa taslak bekler.
+# (şirket kuralı: canlıya her değişiklik için açık onay). Pencere 20 saat yanıtsız kalırsa kapanır, taslak bekler.
 ask_publish() {
   local dir=$1 title=${2//\"/\\\"} answer
   while true; do
     answer=$(osascript \
-      -e "display dialog \"Yeni blog taslağı hazır:\n\n$title\n\nYayınlansın mı?\" with title \"Blog otomasyonu\" buttons {\"Sonra\", \"Önizle\", \"Yayınla\"} default button \"Önizle\" giving up after 3600" \
+      -e "display dialog \"Yeni blog taslağı hazır:\n\n$title\n\nYayınlansın mı?\" with title \"Blog otomasyonu\" buttons {\"Sonra\", \"Önizle\", \"Yayınla\"} default button \"Önizle\" giving up after 72000" \
       2>/dev/null)
     case $answer in
       *"button returned:Yayınla"*)
