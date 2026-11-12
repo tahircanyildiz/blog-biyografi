@@ -34,8 +34,9 @@ interface Fact {
  * sayfada iki kez geçmesi hem okuru hem arama motorunu yoruyordu.
  */
 export function About({ settings, experience, education, skills, postCount }: AboutProps) {
-  const bio = tidy(settings.bio);
-  const showBio = Boolean(tidy(settings.tagline)) && Boolean(bio);
+  // Admin'de boş satırla ayrılan paragraflar ayrı <p> olarak gösterilir.
+  const bioParagraphs = (settings.bio ?? "").split(/\n\s*\n/).map(tidy).filter(Boolean);
+  const showBio = Boolean(tidy(settings.tagline)) && bioParagraphs.length > 0;
 
   const current = experience.find((item) => isOngoing(item.endDate)) ?? experience[0];
   const school = education[0];
@@ -86,7 +87,14 @@ export function About({ settings, experience, education, skills, postCount }: Ab
             <p className="relative font-serif text-2xl leading-snug text-ink md:text-[1.7rem]">
               “{tidy(settings.tagline)}”
             </p>
-            <p className="relative mt-6 text-lg leading-relaxed text-ink-2">{bio}</p>
+            {bioParagraphs.map((paragraph, index) => (
+              <p
+                key={index}
+                className={`relative ${index === 0 ? "mt-6" : "mt-4"} text-lg leading-relaxed text-ink-2`}
+              >
+                {paragraph}
+              </p>
+            ))}
           </div>
         )}
 
