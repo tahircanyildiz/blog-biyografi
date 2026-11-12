@@ -44,6 +44,44 @@ notify() {
   osascript -e "display notification \"$2\" with title \"Blog otomasyonu\" subtitle \"$1\" sound name \"Glass\"" >/dev/null 2>&1 || true
 }
 
+# Taslağı yayınlamak için tek tıkla onay penceresi. Yayın yalnızca "Yayınla"ya basılırsa yapılır
+# (şirket kuralı: canlıya her değişiklik için açık onay). Pencere 1 saat yanıtsız kalırsa taslak bekler.
+ask_publish() {
+  local dir=$1 title=${2//\"/\\\"} answer
+  while true; do
+    answer=$(osascript \
+      -e "display dialog \"Yeni blog taslağı hazır:\n\n$title\n\nYayınlansın mı?\" with title \"Blog otomasyonu\" buttons {\"Sonra\", \"Önizle\", \"Yayınla\"} default button \"Önizle\" giving up after 3600" \
+      2>/dev/null)
+    case $answer in
+      *"button returned:Yayınla"*)
+        if zsh "$here/publish.sh" "$dir" --evet >> "$log" 2>&1; then
+          notify "Yayınlandı" "$title"
+        else
+          notify "Yayınlanamadı" "Ayrıntı: ~/.autoblog/logs/$(date +%Y-%m-%d).log"
+        fi
+        return
+        ;;
+      *"button returned:Önizle"*)
+        open "$dir/preview.html"
+        ;;
+      *)
+        notify "Taslak bekliyor" "$title — onay penceresi için: npm run blog:onay"
+        return
+        ;;
+    esac
+  done
+}
+
+# Yayınlanmamış en son taslak
+latest_unpublished() {
+  local d
+  for d in $(ls -d "$drafts"/*/ 2>/dev/null | sort -r); do
+    if [[ -f $d/draft-result.json ]] && ! grep -q '"published"' "$d/meta.json"; then
+      echo "${d%/}"; return
+    fi
+  done
+}
+
 mkdir -p "$drafts" "$logs"
 [[ -f $topics ]] || cp "$here/topics-log.md" "$topics"
 today=$(date +%Y-%m-%d)
@@ -70,6 +108,16 @@ if [[ ${1:-} == "--kontrol" ]]; then
     esac
     echo "taslak klasörü: $drafts"
   } | tee -a "$log"
+  exit 0
+fi
+
+if [[ ${1:-} == "--onay" ]]; then
+  draft=$(latest_unpublished)
+  if [[ -z $draft ]]; then
+    notify "Bekleyen taslak yok" "Yayınlanmamış taslak bulunamadı."
+    exit 0
+  fi
+  ask_publish "$draft" "$(node -e 'console.log(require(process.argv[1]).title)' "$draft/meta.json")"
   exit 0
 fi
 
@@ -121,7 +169,7 @@ echo "=== $(date) bitti (çıkış kodu $code)" >> "$log"
 draft=$(ls -d "$drafts/$today-"* 2>/dev/null | tail -1)
 if [[ -n $draft && -f $draft/draft-result.json ]]; then
   title=$(node -e 'console.log(require(process.argv[1]).title)' "$draft/meta.json" 2>/dev/null)
-  notify "Yeni taslak hazır" "$title — yayınlamak için: npm run blog:yayinla"
+  ask_publish "$draft" "$title"
 elif [[ -n $draft && -f $draft/SUMMARY.md ]]; then
   notify "Bugün yazı yok" "Uygun konu bulunamadı; ayrıntı: ${draft:t}/SUMMARY.md"
 else

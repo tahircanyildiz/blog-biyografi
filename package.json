@@ -10,7 +10,8 @@
     "postinstall": "prisma generate",
     "db:seed": "tsx prisma/seed.ts",
     "blog:taslak": "zsh automation/auto-blog/run.sh",
-    "blog:yayinla": "zsh automation/auto-blog/publish.sh"
+    "blog:yayinla": "zsh automation/auto-blog/publish.sh",
+    "blog:onay": "zsh automation/auto-blog/run.sh --onay"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

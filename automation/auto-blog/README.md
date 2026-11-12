@@ -2,13 +2,15 @@
 
 Pazartesi, Çarşamba, Cuma ve Pazar 09:00'da macOS zamanlayıcısı (launchd) Claude Code'u arka planda
 çalıştırır. Ajan güncel bir konu seçer, resmi kaynaklardan doğrular, yazıyı ve 3 görseli hazırlar ve
-LobsterLead'e **taslak** olarak ekler. Bitince bildirim gelir. Yayın kararı her zaman insandadır.
+LobsterLead'e **taslak** olarak ekler. Bitince ekrana "Yayınla / Önizle / Sonra" penceresi gelir; yayın
+yalnızca "Yayınla"ya basılınca yapılır (şirket kuralı: canlıya her değişiklik için açık onay).
 
 ## Günlük kullanım
 
 | İş | Komut |
 |---|---|
-| Son taslağı yayınla | `npm run blog:yayinla` |
+| Onay penceresini tekrar aç | `npm run blog:onay` |
+| Son taslağı terminalden yayınla | `npm run blog:yayinla` |
 | Belirli bir taslağı yayınla | `npm run blog:yayinla -- <slug>` |
 | Şimdi bir taslak üret | `npm run blog:taslak` |
 | Ortamı kontrol et | `zsh automation/auto-blog/run.sh --kontrol` |
