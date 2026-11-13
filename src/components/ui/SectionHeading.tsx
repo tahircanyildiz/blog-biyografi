@@ -1,26 +1,22 @@
 import type { ReactNode } from "react";
 
 interface SectionHeadingProps {
-  eyebrow: string;
   title: string;
   description?: string;
-  /** Sağ üstte gösterilecek bağlantı/aksiyon ("Tüm yazılar →" gibi). */
+  /** Sağda gösterilecek bağlantı/aksiyon ("Tüm yazılar" gibi). */
   action?: ReactNode;
   id?: string;
 }
 
-export function SectionHeading({ eyebrow, title, description, action, id }: SectionHeadingProps) {
+/** Bölüm başlığı: başlık + kısa açıklama, sağda isteğe bağlı bağlantı. Başlık üstü etiket yok. */
+export function SectionHeading({ title, description, action, id }: SectionHeadingProps) {
   return (
-    <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+    <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
       <div className="max-w-2xl">
-        <p className="eyebrow">{eyebrow}</p>
-        <h2
-          id={id}
-          className="mt-4 font-serif text-4xl font-semibold tracking-tight text-balance text-ink md:text-5xl"
-        >
+        <h2 id={id} className="font-serif text-3xl font-bold tracking-[-0.02em] text-ink md:text-[2.375rem]">
           {title}
         </h2>
-        {description && <p className="mt-4 text-lg leading-relaxed text-muted">{description}</p>}
+        {description && <p className="mt-2.5 text-[1.0625rem] leading-relaxed text-muted">{description}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>

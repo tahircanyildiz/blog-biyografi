@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { IBM_Plex_Sans, Schibsted_Grotesk } from "next/font/google";
 import { GoogleAnalytics } from "@/components/site/GoogleAnalytics";
 import { getSiteSettings } from "@/lib/content";
 import { SITE_LOCALE, SITE_URL, absoluteUrl } from "@/lib/site";
@@ -8,17 +8,19 @@ import "./globals.css";
 
 // Türkçe karakterler (ı, ş, ğ, İ) "latin-ext" alt kümesinde; olmadan bu
 // harfler sistem fontuyla çiziliyor ve metin karışık görünüyordu.
-const inter = Inter({
-  variable: "--font-inter",
+// Gövde: IBM Plex Sans. Başlıklar: Schibsted Grotesk (gazete kökenli grotesk).
+const plexSans = IBM_Plex_Sans({
+  variable: "--font-body",
   subsets: ["latin", "latin-ext"],
   display: "swap",
+  weight: ["400", "500", "600"],
 });
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const schibsted = Schibsted_Grotesk({
+  variable: "--font-display",
   subsets: ["latin", "latin-ext"],
   display: "swap",
-  weight: ["600"],
+  weight: ["600", "700"],
 });
 
 // Root layout artık her istekte SiteSettings okuyor (GA4/GSC ayarları
@@ -29,8 +31,8 @@ export const dynamic = "force-dynamic";
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#0a0d14" },
-    { media: "(prefers-color-scheme: light)", color: "#f6f7fb" },
+    { media: "(prefers-color-scheme: dark)", color: "#141311" },
+    { media: "(prefers-color-scheme: light)", color: "#f6f2ea" },
   ],
   colorScheme: "dark light",
 };
@@ -88,7 +90,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 // İlk boyamadan ÖNCE çalışır: kayıtlı tema yoksa sistem tercihini uygular,
 // böylece sayfa yanlış temada parlayıp sonra değişmez (FOUC yok).
-const themeScript = `(function(){try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"}var r=document.documentElement;r.dataset.theme=t;r.style.colorScheme=t}catch(e){}})();`;
+const themeScript = `(function(){try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark"){t="dark"}var r=document.documentElement;r.dataset.theme=t;r.style.colorScheme=t}catch(e){}})();`;
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const settings = await getSiteSettings();
@@ -96,7 +98,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="tr"
-      className={`${inter.variable} ${fraunces.variable} h-full`}
+      className={`${plexSans.variable} ${schibsted.variable} h-full`}
       suppressHydrationWarning
     >
       <head>

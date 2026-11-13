@@ -19,11 +19,10 @@ export default async function NotFound() {
     <>
       <SiteHeader />
       <main id="main" className="flex-1">
-        <section className="relative isolate overflow-hidden">
-          <div aria-hidden className="hero-aurora -z-10" />
+        <section>
           <div className="mx-auto max-w-3xl px-6 py-24 text-center md:py-32">
-            <p className="font-mono text-sm font-semibold text-accent-ink">404</p>
-            <h1 className="mt-4 font-serif text-5xl font-semibold tracking-tight text-ink md:text-6xl">
+            <p className="tabular font-serif text-7xl font-bold text-accent-ink">404</p>
+            <h1 className="mt-4 font-serif text-4xl font-bold tracking-[-0.02em] text-ink md:text-5xl">
               Aradığınız sayfa bulunamadı
             </h1>
             <p className="mx-auto mt-5 max-w-xl text-lg text-ink-2">

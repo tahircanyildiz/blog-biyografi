@@ -16,9 +16,9 @@ export function Experience({ items }: ExperienceProps) {
       aria-labelledby="experience-heading"
       className="mx-auto max-w-6xl px-6 py-14 md:py-20"
     >
-      <SectionHeading id="experience-heading" eyebrow="Çalışma geçmişi" title="Deneyim" />
+      <SectionHeading id="experience-heading" title="Deneyim" />
 
-      <ol className="relative mt-12 space-y-6 border-l border-border pl-7 md:ml-2 md:pl-10">
+      <ol className="relative mt-8 space-y-5 border-l border-border pl-7 md:ml-2 md:pl-10">
         {items.map((exp) => {
           const ongoing = isOngoing(exp.endDate);
           const stats = [
@@ -29,15 +29,15 @@ export function Experience({ items }: ExperienceProps) {
           const meta = [tidy(exp.company), tidy(exp.employment)].filter(Boolean);
 
           return (
-            <li key={exp.id} className="reveal relative">
+            <li key={exp.id} className="relative">
               <span
                 aria-hidden
                 className={`absolute -left-[calc(1.75rem+6.5px)] top-8 size-3 rounded-full ring-4 ring-bg md:-left-[calc(2.5rem+6.5px)] ${
-                  ongoing ? "bg-accent shadow-[0_0_0_6px] shadow-accent/25" : "bg-border-hover"
+                  ongoing ? "bg-accent" : "bg-border-hover"
                 }`}
               />
 
-              <article className="card card-hover p-6 md:p-8">
+              <article className="card p-6 md:p-8">
                 <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
                   <div className="min-w-0">
                     <h3 className="text-xl font-semibold text-ink">{tidy(exp.role)}</h3>
@@ -45,7 +45,7 @@ export function Experience({ items }: ExperienceProps) {
                       <p className="mt-1 text-sm text-muted">
                         {meta.map((part, index) => (
                           <span key={part}>
-                            {index > 0 && <span aria-hidden> · </span>}
+                            {index > 0 && ", "}
                             <span className={index === 0 ? "font-medium text-ink-2" : "capitalize"}>
                               {part}
                             </span>
@@ -60,7 +60,7 @@ export function Experience({ items }: ExperienceProps) {
                         Güncel
                       </span>
                     )}
-                    <span className="chip font-mono text-xs">
+                    <span className="tabular text-sm text-muted">
                       {tidy(exp.startDate)} – {tidy(exp.endDate)}
                     </span>
                   </div>

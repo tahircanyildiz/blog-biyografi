@@ -22,7 +22,6 @@ export function AuthorCard({ settings, socialLinks }: AuthorCardProps) {
 
   return (
     <aside aria-label="Yazar hakkında" className="card relative overflow-hidden p-6 md:p-8">
-      <div aria-hidden className="absolute -right-16 -top-16 size-48 rounded-full bg-accent/15 blur-3xl" />
       <div className="relative flex flex-col gap-5 sm:flex-row">
         {settings.profileImage && (
           <div className="relative size-20 shrink-0 overflow-hidden rounded-2xl border border-border">
@@ -30,7 +29,7 @@ export function AuthorCard({ settings, socialLinks }: AuthorCardProps) {
           </div>
         )}
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Yazar</p>
+          <p className="text-sm text-muted">Yazar</p>
           <p className="mt-1 font-serif text-2xl font-semibold text-ink">
             <Link href="/#about" rel="author" className="hover:text-accent-ink">
               {name}

@@ -33,7 +33,7 @@ export async function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-auto border-t border-border bg-surface/50">
+    <footer className="mt-auto border-t border-border bg-surface">
       <div className="mx-auto grid max-w-6xl gap-12 px-6 py-14 md:grid-cols-[1.3fr_0.8fr_1.4fr]">
         <div>
           <Link href="/" className="inline-flex items-center gap-3">
@@ -67,7 +67,7 @@ export async function Footer() {
         </div>
 
         <nav aria-label="Alt menü">
-          <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Gezinti</h2>
+          <h2 className="text-sm font-semibold text-ink">Gezinti</h2>
           <ul className="mt-4 space-y-2.5 text-sm">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
@@ -87,7 +87,7 @@ export async function Footer() {
 
         {latest.length > 0 && (
           <div>
-            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Son yazılar</h2>
+            <h2 className="text-sm font-semibold text-ink">Son yazılar</h2>
             <ul className="mt-4 space-y-4">
               {latest.map((post) => (
                 <li key={post.id}>

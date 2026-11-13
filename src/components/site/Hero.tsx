@@ -1,166 +1,112 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Briefcase, Layers, MapPin, Newspaper } from "lucide-react";
-import type { SiteSettings, SocialLink } from "@prisma/client";
-import type { PostSummary } from "@lobsterlead/blog-sdk";
+import type { Experience, SiteSettings, SocialLink } from "@prisma/client";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { getSocialMeta } from "@/lib/social";
-import { tidy } from "@/lib/site";
+import { isOngoing, tidy } from "@/lib/site";
 
 interface HeroProps {
   settings: SiteSettings;
   socialLinks: SocialLink[];
-  latestPost: PostSummary | null;
-  postCount: number;
+  experience: Experience[];
 }
 
 const delay = (ms: number) => ({ "--delay": `${ms}ms` }) as CSSProperties;
 
 /**
  * Sunucu bileşeni: isim (h1) ve fotoğraf (LCP) ilk HTML'de animasyonsuz
- * görünür; sadece ikincil öğeler CSS ile kısa bir girişle gelir.
+ * görünür; yalnızca ikincil öğeler kısa bir girişle gelir. Gradyan isim,
+ * parlayan arka plan ve istatistik şeridi bilinçli olarak yok.
  */
-export function Hero({ settings, socialLinks, latestPost, postCount }: HeroProps) {
+export function Hero({ settings, socialLinks, experience }: HeroProps) {
+  const name = `${settings.firstName} ${settings.lastName}`.trim();
   const lead = tidy(settings.tagline) || tidy(settings.bio);
   const location = tidy(settings.location);
   const initials = `${settings.firstName.trim()[0] ?? ""}${settings.lastName.trim()[0] ?? ""}`;
-
-  const stats = [
-    { icon: Briefcase, value: tidy(settings.statYearsValue), label: tidy(settings.statYearsLabel) },
-    { icon: Layers, value: tidy(settings.statProjValue), label: tidy(settings.statProjLabel) },
-    { icon: Newspaper, value: postCount > 0 ? String(postCount) : "", label: "Blog yazısı" },
-  ].filter((stat) => stat.value && stat.label);
+  const current = experience.find((item) => isOngoing(item.endDate));
 
   return (
-    <section id="hero" className="relative isolate overflow-hidden">
-      <div aria-hidden className="hero-aurora -z-10" />
-      <div aria-hidden className="hero-grid -z-10" />
-
-      <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-14 px-6 pb-14 pt-10 md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] md:gap-12 md:pb-20 md:pt-16">
+    <section id="hero" className="mx-auto max-w-6xl px-6 pb-16 pt-12 md:pb-24 md:pt-20">
+      <div className="grid grid-cols-1 items-center gap-14 md:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] md:gap-16">
         <div className="min-w-0">
-          {latestPost && (
-            <Link
-              href={`/blog/${latestPost.slug}`}
-              className="fade-up group inline-flex max-w-full items-center gap-2.5 rounded-full border border-border bg-surface/70 py-1 pl-1 pr-3 text-sm shadow-sm backdrop-blur transition-colors hover:border-accent-ink/50"
-              style={delay(0)}
-            >
-              <span className="shrink-0 rounded-full bg-accent px-2.5 py-1 text-xs font-semibold text-on-accent">
-                Yeni yazı
-              </span>
-              <span className="truncate text-ink-2 group-hover:text-ink">{latestPost.title}</span>
-              <ArrowRight
-                size={14}
-                aria-hidden
-                className="shrink-0 text-muted transition-transform group-hover:translate-x-0.5"
-              />
-            </Link>
-          )}
+          <p className="fade-up text-[1.0625rem] font-medium text-accent-ink" style={delay(0)}>
+            Merhaba, ben
+          </p>
 
-          {settings.roleTitle && (
-            <p className="eyebrow fade-up mt-8" style={delay(60)}>
-              {tidy(settings.roleTitle)}
-            </p>
-          )}
-
-          <h1 className="mt-4 font-serif text-5xl font-semibold leading-[1.04] tracking-tight text-ink sm:text-6xl lg:text-7xl">
-            {settings.firstName}{" "}
-            {settings.lastName && <span className="text-gradient">{settings.lastName}</span>}
+          <h1 className="mt-3 font-serif text-5xl font-bold leading-[1.02] tracking-[-0.025em] text-ink [overflow-wrap:break-word] sm:text-6xl lg:text-[4.75rem]">
+            {name}
           </h1>
 
           {lead && (
             <p
-              className="fade-up mt-6 max-w-xl text-lg leading-relaxed text-ink-2 md:text-xl"
-              style={delay(120)}
+              className="fade-up mt-6 max-w-[37rem] text-lg leading-relaxed text-ink-2 md:text-[1.3125rem] md:leading-[1.6]"
+              style={delay(80)}
             >
               {lead}
             </p>
           )}
 
-          <div className="fade-up mt-9 flex flex-wrap gap-3" style={delay(180)}>
+          <div className="fade-up mt-9 flex flex-wrap items-center gap-3" style={delay(160)}>
             <Link href="/blog" className="btn btn-primary">
-              Blog yazılarını oku
-              <ArrowRight size={18} aria-hidden />
+              Blogu oku
             </Link>
-            <Link href="/#contact" className="btn btn-secondary">
-              İletişime geç
+            <Link href="/#about" className="btn btn-secondary">
+              Hakkımda
             </Link>
+            {socialLinks.length > 0 && (
+              <ul className="ml-1 flex items-center gap-1">
+                {socialLinks.map((social) => (
+                  <li key={social.id}>
+                    <a
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer me"
+                      aria-label={getSocialMeta(social.platform).label}
+                      className="inline-flex size-11 items-center justify-center rounded-lg text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink"
+                    >
+                      <SocialIcon platform={social.platform} size={19} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
-
-          {(location || socialLinks.length > 0) && (
-            <div
-              className="fade-up mt-9 flex flex-wrap items-center gap-x-5 gap-y-3 text-sm text-muted"
-              style={delay(240)}
-            >
-              {location && (
-                <span className="inline-flex items-center gap-1.5">
-                  <MapPin size={16} aria-hidden className="text-accent-ink" />
-                  {location}
-                </span>
-              )}
-              {location && socialLinks.length > 0 && (
-                <span aria-hidden className="hidden h-4 w-px bg-border-hover sm:block" />
-              )}
-              {socialLinks.length > 0 && (
-                <ul className="flex items-center gap-2">
-                  {socialLinks.map((social) => (
-                    <li key={social.id}>
-                      <a
-                        href={social.url}
-                        target="_blank"
-                        rel="noopener noreferrer me"
-                        aria-label={getSocialMeta(social.platform).label}
-                        className="inline-flex size-10 items-center justify-center rounded-full border border-border bg-surface/60 text-ink-2 transition-colors hover:border-accent-ink/60 hover:text-accent-ink"
-                      >
-                        <SocialIcon platform={social.platform} size={17} />
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          )}
         </div>
 
-        <div className="relative mx-auto w-full max-w-[22rem] pb-10 md:max-w-sm">
-          <div
-            aria-hidden
-            className="absolute -inset-6 -z-10 rounded-[3rem] bg-gradient-to-br from-accent/45 via-accent/5 to-accent-2/30 blur-3xl"
-          />
-          <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-border bg-surface shadow-2xl shadow-black/30">
+        <div className="relative mx-auto w-full max-w-[22rem] md:max-w-none">
+          <div className="relative aspect-[4/5] overflow-hidden rounded-[1.125rem] border border-border bg-surface">
             {settings.profileImage ? (
               <Image
                 src={settings.profileImage}
-                alt={`${settings.firstName} ${settings.lastName}`.trim()}
+                alt={name}
                 fill
                 sizes="(min-width: 768px) 384px, 88vw"
                 className="object-cover"
                 priority
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-accent/30 to-accent-2/20 font-serif text-7xl text-ink">
+              <div className="flex h-full w-full items-center justify-center font-serif text-7xl text-muted">
                 {initials}
               </div>
             )}
           </div>
 
-          {stats.length > 0 && (
-            <dl
-              className="fade-up absolute inset-x-4 -bottom-2 grid divide-x divide-border rounded-2xl border border-border bg-surface/85 py-3 shadow-xl backdrop-blur-xl"
-              style={{ ...delay(200), gridTemplateColumns: `repeat(${stats.length}, minmax(0, 1fr))` }}
+          {(current || location) && (
+            <div
+              className="fade-up relative mx-4 -mt-14 max-w-[17rem] rounded-xl border border-border bg-surface px-4 py-3.5 md:absolute md:-left-9 md:bottom-7 md:m-0"
+              style={delay(200)}
             >
-              {stats.map((stat) => (
-                <div key={stat.label} className="flex flex-col items-center gap-0.5 px-2 text-center">
-                  <stat.icon size={16} aria-hidden className="order-1 mb-1 text-accent-ink" />
-                  <dt className="order-3 text-[0.7rem] font-medium uppercase tracking-wider text-muted">
-                    {stat.label}
-                  </dt>
-                  <dd className="order-2 font-serif text-2xl font-semibold leading-none text-ink">
-                    {stat.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
+              {current && (
+                <>
+                  <p className="text-[0.8125rem] text-muted">Şu an</p>
+                  <p className="mt-0.5 font-semibold leading-snug text-ink">
+                    {tidy(current.role)}, {tidy(current.company)}
+                  </p>
+                </>
+              )}
+              {location && <p className={`text-sm text-ink-2 ${current ? "mt-0.5" : ""}`}>{location}</p>}
+            </div>
           )}
         </div>
       </div>

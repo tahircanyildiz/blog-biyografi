@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { CheckCircle2, Mail, MapPin, Send } from "lucide-react";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import { getSocialMeta } from "@/lib/social";
 
@@ -20,7 +21,7 @@ interface ContactProps {
 type SubmitState = "idle" | "loading" | "success" | "error";
 
 const inputClass =
-  "w-full rounded-xl border border-border bg-bg/60 px-4 py-3 text-ink placeholder:text-muted/70 outline-none transition-colors focus:border-accent-ink focus-visible:outline-none";
+  "w-full rounded-lg border border-border bg-bg px-4 py-3 text-base text-ink placeholder:text-muted/70 transition-colors hover:border-border-hover";
 
 export function Contact({ email, location, socialLinks }: ContactProps) {
   const [state, setState] = useState<SubmitState>("idle");
@@ -55,21 +56,14 @@ export function Contact({ email, location, socialLinks }: ContactProps) {
 
   return (
     <section id="contact" aria-labelledby="contact-heading" className="mx-auto max-w-6xl px-6 py-14 md:py-20">
-      <div className="reveal card relative isolate overflow-hidden p-6 sm:p-10 md:p-14">
-        <div aria-hidden className="hero-aurora -z-10 opacity-60" />
+      <SectionHeading id="contact-heading" title="İletişim" />
 
+      <div className="card mt-8 p-6 sm:p-10">
         <div className="grid gap-12 md:grid-cols-[1fr_1.1fr]">
           <div>
-            <p className="eyebrow">İletişime geçin</p>
-            <h2
-              id="contact-heading"
-              className="mt-4 font-serif text-4xl font-semibold tracking-tight text-balance text-ink md:text-5xl"
-            >
-              Birlikte çalışalım
-            </h2>
-            <p className="mt-5 max-w-md text-lg leading-relaxed text-ink-2">
-              Yeni bir proje, iş birliği ya da yazılarımla ilgili bir sorunuz mu var? Mesajınızı
-              bırakın, en kısa sürede dönüş yapayım.
+            <p className="max-w-md text-lg leading-relaxed text-ink-2">
+              Bir yazıyla ilgili sorunuz, düzeltme öneriniz ya da bir iş teklifiniz varsa formu
+              doldurun veya doğrudan e-posta gönderin.
             </p>
 
             <ul className="mt-8 flex flex-col gap-3">
@@ -79,7 +73,7 @@ export function Contact({ email, location, socialLinks }: ContactProps) {
                     href={`mailto:${email}`}
                     className="group inline-flex items-center gap-3 text-ink transition-colors hover:text-accent-ink"
                   >
-                    <span className="inline-flex size-10 items-center justify-center rounded-xl border border-border bg-surface text-accent-ink">
+                    <span className="inline-flex size-10 items-center justify-center rounded-lg bg-surface-2 text-accent-ink">
                       <Mail size={18} aria-hidden />
                     </span>
                     <span className="break-all">{email}</span>
@@ -88,7 +82,7 @@ export function Contact({ email, location, socialLinks }: ContactProps) {
               )}
               {location && (
                 <li className="inline-flex items-center gap-3 text-ink">
-                  <span className="inline-flex size-10 items-center justify-center rounded-xl border border-border bg-surface text-accent-ink">
+                  <span className="inline-flex size-10 items-center justify-center rounded-lg bg-surface-2 text-accent-ink">
                     <MapPin size={18} aria-hidden />
                   </span>
                   {location}
@@ -121,11 +115,11 @@ export function Contact({ email, location, socialLinks }: ContactProps) {
           {state === "success" ? (
             <div
               role="status"
-              className="flex flex-col items-center justify-center rounded-2xl border border-border bg-bg/50 p-10 text-center"
+              className="flex flex-col items-center justify-center rounded-xl bg-surface-2 p-10 text-center"
             >
               <CheckCircle2 size={44} aria-hidden className="text-accent-ink" />
-              <p className="mt-4 text-xl font-semibold text-ink">Mesajınız ulaştı, teşekkürler!</p>
-              <p className="mt-2 text-muted">En kısa sürede size dönüş yapacağım.</p>
+              <p className="mt-4 text-xl font-semibold text-ink">Mesajınız iletildi. Teşekkürler.</p>
+              <p className="mt-2 text-muted">Yanıtım, formda yazdığınız e-posta adresine gelecek.</p>
               <button
                 type="button"
                 onClick={() => setState("idle")}
@@ -194,8 +188,8 @@ export function Contact({ email, location, socialLinks }: ContactProps) {
               </button>
 
               {state === "error" && (
-                <p className="text-sm text-red-500 light:text-red-600" role="alert">
-                  Bir hata oluştu, lütfen tekrar deneyin ya da doğrudan e-posta gönderin.
+                <p className="text-sm text-red-400 light:text-red-700" role="alert">
+                  Mesaj gönderilemedi. Tekrar deneyin ya da doğrudan e-posta gönderin.
                 </p>
               )}
             </form>

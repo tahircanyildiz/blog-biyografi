@@ -73,11 +73,10 @@ export async function renderOgImage({ eyebrow, title, description, footer, photo
           height: "100%",
           display: "flex",
           position: "relative",
-          backgroundColor: "#0a0d14",
-          backgroundImage:
-            "radial-gradient(circle at 12% 18%, rgba(59,91,219,0.55), transparent 45%), radial-gradient(circle at 92% 8%, rgba(95,208,243,0.28), transparent 40%), radial-gradient(circle at 70% 110%, rgba(59,91,219,0.35), transparent 50%)",
+          backgroundColor: "#141311",
+          borderTop: "10px solid #e3a54a",
           fontFamily: "Inter",
-          color: "#eef2f8",
+          color: "#f2ece3",
           padding: "64px 72px",
         }}
       >
@@ -102,14 +101,12 @@ export async function renderOgImage({ eyebrow, title, description, footer, photo
             <div
               style={{
                 display: "flex",
-                fontSize: 24,
+                fontSize: 28,
                 fontWeight: 600,
-                letterSpacing: 4,
-                color: "#93a8fb",
+                color: "#efb965",
               }}
             >
-              {/* satori'nin textTransform'u Türkçe kurallarını bilmiyor (i → I). */}
-              {eyebrow.toLocaleUpperCase("tr-TR")}
+              {eyebrow}
             </div>
           </div>
 
@@ -133,7 +130,7 @@ export async function renderOgImage({ eyebrow, title, description, footer, photo
               marginTop: 28,
               fontSize: 30,
               lineHeight: 1.4,
-              color: "#cdd5e2",
+              color: "#d6cdc1",
               maxWidth: photoUrl ? 680 : 960,
             }}
           >
@@ -146,9 +143,9 @@ export async function renderOgImage({ eyebrow, title, description, footer, photo
                 style={{
                   display: "flex",
                   padding: "10px 22px",
-                  borderRadius: 999,
-                  backgroundColor: "#3b5bdb",
-                  color: "#ffffff",
+                  borderRadius: 10,
+                  backgroundColor: "#e3a54a",
+                  color: "#1b1408",
                   fontSize: 24,
                   fontWeight: 600,
                 }}
@@ -156,7 +153,7 @@ export async function renderOgImage({ eyebrow, title, description, footer, photo
                 {badge}
               </div>
             )}
-            <div style={{ display: "flex", fontSize: 26, color: "#9aa4b8" }}>{footer}</div>
+            <div style={{ display: "flex", fontSize: 26, color: "#a59a8b" }}>{footer}</div>
           </div>
         </div>
 
@@ -168,10 +165,9 @@ export async function renderOgImage({ eyebrow, title, description, footer, photo
               marginLeft: 48,
               width: 340,
               height: 420,
-              borderRadius: 40,
+              borderRadius: 20,
               overflow: "hidden",
-              border: "2px solid rgba(147,168,251,0.35)",
-              boxShadow: "0 30px 80px rgba(0,0,0,0.45)",
+              border: "2px solid #302c28",
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}

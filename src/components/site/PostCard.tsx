@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Clock, Newspaper } from "lucide-react";
 import type { PostSummary } from "@lobsterlead/blog-sdk";
-import { formatDate, isRecent } from "@/lib/posts";
+import { formatDate } from "@/lib/posts";
+import { topicOf } from "@/lib/topics";
 
-type Variant = "featured" | "default" | "compact";
+type Variant = "featured" | "default";
 
 interface PostCardProps {
   post: PostSummary;
@@ -13,50 +13,26 @@ interface PostCardProps {
   headingLevel?: "h2" | "h3";
   /** Ekranın üst kısmındaki (LCP adayı) kapak görselini öncelikli yükle. */
   priority?: boolean;
-  /** featured varyantı geniş ekranda yatay (görsel solda) dizilsin. */
-  wide?: boolean;
 }
 
+/** Tarih + okuma süresi. Ayraç, metin değil küçük bir nokta (ekran okuyucu atlar). */
 export function PostMeta({ post, className = "" }: { post: PostSummary; className?: string }) {
   const iso = post.publishedAt ?? post.updatedAt;
   const date = formatDate(iso);
 
   return (
-    <div
-      className={`flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-muted ${className}`}
-    >
-      {isRecent(post.publishedAt) && (
-        <span className="rounded-full bg-accent px-2 py-0.5 text-[0.68rem] font-semibold uppercase tracking-wider text-on-accent">
-          Yeni
-        </span>
-      )}
+    <p className={`tabular flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-muted ${className}`}>
       {date && <time dateTime={iso}>{date}</time>}
-      {post.readingTimeMinutes > 0 && (
-        <span className="inline-flex items-center gap-1">
-          <Clock size={13} aria-hidden />
-          {post.readingTimeMinutes} dk okuma
-        </span>
+      {date && post.readingTimeMinutes > 0 && (
+        <span aria-hidden className="size-[3px] rounded-full bg-current opacity-70" />
       )}
-    </div>
+      {post.readingTimeMinutes > 0 && <span>{post.readingTimeMinutes} dk okuma</span>}
+    </p>
   );
 }
 
-function Cover({
-  post,
-  sizes,
-  priority = false,
-}: {
-  post: PostSummary;
-  sizes: string;
-  priority?: boolean;
-}) {
-  if (!post.coverImage?.url) {
-    return (
-      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-accent/25 via-surface-2 to-accent-2/15 text-accent-ink">
-        <Newspaper size={28} aria-hidden />
-      </div>
-    );
-  }
+function Cover({ post, sizes, priority = false }: { post: PostSummary; sizes: string; priority?: boolean }) {
+  if (!post.coverImage?.url) return null;
 
   return (
     <Image
@@ -65,98 +41,53 @@ function Cover({
       fill
       sizes={sizes}
       priority={priority}
-      className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+      className="object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02]"
     />
   );
 }
 
-export function PostCard({
-  post,
-  variant = "default",
-  headingLevel = "h3",
-  priority = false,
-  wide = false,
-}: PostCardProps) {
+/**
+ * Yazı kartı: kapak + konu + başlık + tarih. Kartın tamamı tıklanabilir
+ * (stretched link), bağlantı metni yalnızca başlık.
+ */
+export function PostCard({ post, variant = "default", headingLevel = "h3", priority = false }: PostCardProps) {
   const Heading = headingLevel;
   const href = `/blog/${post.slug}`;
+  const topic = topicOf(post);
 
   if (variant === "featured") {
     return (
-      <article
-        className={`group card card-hover relative overflow-hidden focus-within:ring-2 focus-within:ring-accent-ink ${
-          wide ? "grid lg:grid-cols-[1.35fr_1fr]" : "flex h-full flex-col"
-        }`}
-      >
-        <div
-          className={`relative overflow-hidden bg-surface-2 ${
-            wide ? "aspect-[16/9] lg:aspect-auto lg:min-h-[24rem]" : "aspect-[16/9]"
-          }`}
-        >
-          <Cover
-            post={post}
-            priority={priority}
-            sizes={wide ? "(min-width: 1024px) 640px, 100vw" : "(min-width: 1024px) 680px, 100vw"}
-          />
+      <article className="card card-hover group relative grid overflow-hidden lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+        <div className="relative aspect-[16/9] overflow-hidden bg-surface-2">
+          <Cover post={post} priority={priority} sizes="(min-width: 1024px) 640px, 100vw" />
         </div>
-        <div className="flex flex-1 flex-col p-6 md:p-8">
-          <PostMeta post={post} />
-          <Heading className="mt-3 font-serif text-2xl font-semibold leading-snug tracking-tight text-balance text-ink md:text-3xl">
-            <Link href={href} className="stretched-link focus-visible:outline-none">
+        <div className="flex flex-col justify-center p-6 md:p-9">
+          {topic && <p className="text-sm font-semibold text-accent-ink">{topic}</p>}
+          <Heading className="mt-3 font-serif text-2xl font-bold leading-[1.18] tracking-[-0.015em] text-ink md:text-[2rem]">
+            <Link href={href} className="stretched-link">
               {post.title}
             </Link>
           </Heading>
-          {post.excerpt && (
-            <p className="mt-3 line-clamp-3 leading-relaxed text-muted">{post.excerpt}</p>
-          )}
-          <span
-            aria-hidden
-            className="mt-auto inline-flex items-center gap-1.5 pt-6 text-sm font-semibold text-accent-ink"
-          >
-            Yazıyı oku
-            <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-          </span>
-        </div>
-      </article>
-    );
-  }
-
-  if (variant === "compact") {
-    return (
-      <article className="group card card-hover relative flex h-full items-center gap-4 rounded-2xl p-3 focus-within:ring-2 focus-within:ring-accent-ink">
-        <div className="relative aspect-[4/3] w-28 shrink-0 overflow-hidden rounded-xl bg-surface-2 sm:w-32">
-          <Cover post={post} sizes="128px" />
-        </div>
-        <div className="min-w-0 flex-1 pr-2">
-          <PostMeta post={post} />
-          <Heading className="mt-1.5 line-clamp-2 text-[0.95rem] font-semibold leading-snug text-ink transition-colors group-hover:text-accent-ink">
-            <Link href={href} className="stretched-link focus-visible:outline-none">
-              {post.title}
-            </Link>
-          </Heading>
+          {post.excerpt && <p className="mt-4 line-clamp-3 leading-relaxed text-ink-2">{post.excerpt}</p>}
+          <PostMeta post={post} className="mt-5" />
         </div>
       </article>
     );
   }
 
   return (
-    <article className="group card card-hover relative flex h-full flex-col overflow-hidden rounded-2xl focus-within:ring-2 focus-within:ring-accent-ink">
-      <div className="relative aspect-[16/9] overflow-hidden bg-surface-2">
-        <Cover
-          post={post}
-          priority={priority}
-          sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw"
-        />
+    <article className="card card-hover group relative flex h-full flex-col overflow-hidden">
+      <div className="relative aspect-[16/9] overflow-hidden border-b border-border bg-surface-2">
+        <Cover post={post} priority={priority} sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw" />
       </div>
-      <div className="flex flex-1 flex-col p-5">
-        <PostMeta post={post} />
-        <Heading className="mt-2.5 line-clamp-3 text-lg font-semibold leading-snug text-ink transition-colors group-hover:text-accent-ink">
-          <Link href={href} className="stretched-link focus-visible:outline-none">
+      <div className="flex flex-1 flex-col p-5 md:p-6">
+        {topic && <p className="text-[0.8125rem] font-semibold text-accent-ink">{topic}</p>}
+        <Heading className="mt-2 line-clamp-3 text-lg font-semibold leading-snug text-ink transition-colors group-hover:text-accent-ink">
+          <Link href={href} className="stretched-link">
             {post.title}
           </Link>
         </Heading>
-        {post.excerpt && (
-          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted">{post.excerpt}</p>
-        )}
+        <PostMeta post={post} className="mt-auto pt-4" />
       </div>
     </article>
   );

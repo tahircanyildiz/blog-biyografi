@@ -1,6 +1,7 @@
 import { cache } from "react";
 import type { PostSummary } from "@lobsterlead/blog-sdk";
 import { blog } from "@/lib/blog";
+import { topicOf } from "@/lib/topics";
 
 export const BLOG_LOCALE = "tr";
 
@@ -121,13 +122,17 @@ export function getAdjacentPosts(posts: PostSummary[], slug: string) {
   const older = index < posts.length - 1 ? posts[index + 1] : null;
   const exclude = new Set([slug, newer?.slug, older?.slug]);
   const currentTags = new Set(cleanTags(posts[index].tags));
+  const currentTopic = topicOf(posts[index]);
 
+  // Çoğu yazıda etiket olmadığı için başlıktan çıkarılan konu da sayılır.
   const more = posts
     .filter((post) => !exclude.has(post.slug))
     .map((post, order) => ({
       post,
       order,
-      shared: cleanTags(post.tags).filter((tag) => currentTags.has(tag)).length,
+      shared:
+        cleanTags(post.tags).filter((tag) => currentTags.has(tag)).length * 2 +
+        (currentTopic && topicOf(post) === currentTopic ? 1 : 0),
     }))
     .sort((a, b) => b.shared - a.shared || a.order - b.order)
     .slice(0, 3)

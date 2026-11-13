@@ -24,7 +24,7 @@ mkdir -p "$work/fonts"
 cp "$root/public/fonts/og/"*.woff "$work/fonts/"
 
 "$chrome" --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=1 \
-  --allow-file-access-from-files --virtual-time-budget=3000 \
+  --allow-file-access-from-files --virtual-time-budget=8000 \
   --user-data-dir="$work/.chrome" --window-size="$width,$height" \
   --screenshot="$work/page.png" "file://$work/page.html" >/dev/null 2>&1
 

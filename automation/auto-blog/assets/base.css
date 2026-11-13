@@ -1,33 +1,29 @@
-/* Blog görselleri için ortak stil: sitenin OG fontları ve lacivert paleti.
-   render.sh bu dosyayı ve public/fonts/og fontlarını görselin yanına kopyalar. */
-@font-face { font-family: "FrauncesL"; src: url("fonts/fraunces-latin-600-normal.woff") format("woff"); font-weight: 600; }
-@font-face { font-family: "FrauncesX"; src: url("fonts/fraunces-latin-ext-600-normal.woff") format("woff"); font-weight: 600; }
-@font-face { font-family: "InterL"; src: url("fonts/inter-latin-400-normal.woff") format("woff"); font-weight: 400; }
-@font-face { font-family: "InterL"; src: url("fonts/inter-latin-600-normal.woff") format("woff"); font-weight: 600; }
-@font-face { font-family: "InterX"; src: url("fonts/inter-latin-ext-400-normal.woff") format("woff"); font-weight: 400; }
-@font-face { font-family: "InterX"; src: url("fonts/inter-latin-ext-600-normal.woff") format("woff"); font-weight: 600; }
+/* Blog görselleri için ortak stil: sitenin "Grafit & Kehribar" paleti ve fontları.
+   render.sh bu dosyayı görselin yanına kopyalar. Fontlar Google Fonts'tan yüklenir
+   (sitedeki ile aynı: Schibsted Grotesk başlık, IBM Plex Sans metin, IBM Plex Mono kod). */
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;600&family=Schibsted+Grotesk:wght@600;700&display=block");
 
 :root {
-  --bg: #0a0d14;
-  --surface: #10141e;
-  --surface-2: #171c29;
-  --border: #222a3a;
-  --border-hover: #34405a;
-  --ink: #eef2f8;
-  --ink-2: #cdd5e2;
-  --muted: #9aa4b8;
-  --accent: #3b5bdb;
-  --accent-ink: #93a8fb;
-  --accent-2: #5fd0f3;
-  --amber: #f5b14c;
-  --ok: #3fb37f;
+  --bg: #141311;
+  --surface: #1c1a17;
+  --surface-2: #25221f;
+  --border: #302c28;
+  --border-hover: #443e37;
+  --ink: #f2ece3;
+  --ink-2: #d6cdc1;
+  --muted: #a59a8b;
+  --accent: #e3a54a;
+  --accent-ink: #efb965;
+  --accent-2: #9fbf9f;
+  --amber: #e3a54a;
+  --ok: #7fbf8f;
   --bad: #e5675e;
-  /* Grafiklerde iki seri için doğrulanmış renkler (koyu zemin) */
-  --series-1: #3b5bdb;
-  --series-2: #22a3cc;
-  --serif: "FrauncesL", "FrauncesX", Georgia, serif;
-  --sans: "InterL", "InterX", -apple-system, system-ui, sans-serif;
-  --mono: "SF Mono", Menlo, Consolas, monospace;
+  /* Grafiklerde iki seri: kehribar + çelik mavisi (renk körlüğünde ayırt edilir) */
+  --series-1: #e3a54a;
+  --series-2: #7fa7c9;
+  --serif: "Schibsted Grotesk", system-ui, sans-serif;
+  --sans: "IBM Plex Sans", -apple-system, system-ui, sans-serif;
+  --mono: "IBM Plex Mono", "SF Mono", Menlo, monospace;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }

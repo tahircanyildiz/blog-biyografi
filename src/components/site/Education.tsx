@@ -32,9 +32,9 @@ export function Education({ items }: EducationProps) {
       aria-labelledby="education-heading"
       className="mx-auto max-w-6xl px-6 py-14 md:py-20"
     >
-      <SectionHeading id="education-heading" eyebrow="Akademik geçmiş" title="Eğitim" />
+      <SectionHeading id="education-heading" title="Eğitim" />
 
-      <div className="mt-12 grid gap-4 md:grid-cols-2">
+      <div className={`mt-8 grid gap-5 ${items.length > 1 ? "md:grid-cols-2" : ""}`}>
         {items.map((edu) => {
           const Icon = ICON_MAP[edu.icon] ?? GraduationCap;
           const bullets = splitLines(edu.bullets);
@@ -43,8 +43,8 @@ export function Education({ items }: EducationProps) {
           const subline = tidy(edu.institution) ? tidy(edu.title) : "";
 
           return (
-            <article key={edu.id} className="reveal card card-hover flex gap-5 p-6 md:p-8">
-              <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-2xl bg-accent/12 text-accent-ink ring-1 ring-accent/20">
+            <article key={edu.id} className="card flex gap-5 p-6 md:p-8">
+              <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-accent-ink">
                 <Icon size={22} aria-hidden />
               </span>
 
@@ -52,16 +52,16 @@ export function Education({ items }: EducationProps) {
                 <h3 className="text-lg font-semibold text-ink">{headline}</h3>
                 {(subline || edu.type) && (
                   <p className="mt-1 text-ink-2">
-                    {[edu.type && tidy(edu.type), subline].filter(Boolean).join(" · ")}
+                    {[subline, edu.type && tidy(edu.type)].filter(Boolean).join(", ")}
                   </p>
                 )}
-                {edu.period && <p className="chip mt-3 font-mono text-xs">{tidy(edu.period)}</p>}
+                {edu.period && <p className="tabular mt-2 text-sm text-muted">{tidy(edu.period)}</p>}
 
                 {bullets.length > 0 && (
                   <ul className="mt-5 space-y-2 border-t border-border pt-4 text-sm text-ink-2">
                     {bullets.map((bullet) => (
                       <li key={bullet} className="flex gap-2.5">
-                        <span aria-hidden className="mt-2 size-1.5 shrink-0 rounded-full bg-accent-ink" />
+                        <span aria-hidden className="mt-2.5 size-1 shrink-0 rounded-full bg-muted" />
                         {bullet}
                       </li>
                     ))}

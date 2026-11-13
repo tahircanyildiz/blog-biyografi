@@ -63,19 +63,18 @@ export function Skills({ groups }: SkillsProps) {
     <section id="skills" aria-labelledby="skills-heading" className="mx-auto max-w-6xl px-6 py-14 md:py-20">
       <SectionHeading
         id="skills-heading"
-        eyebrow="Teknik yetkinlikler"
         title="Yetenekler"
         description="Günlük işimde kullandığım araçlar, diller ve yöntemler."
       />
 
-      <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from(categories.entries()).map(([category, items]) => {
           const Icon = iconFor(category);
 
           return (
-            <div key={category} className="reveal card card-hover p-6">
+            <div key={category} className="card p-6">
               <div className="flex items-center gap-3">
-                <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-accent/12 text-accent-ink ring-1 ring-accent/20">
+                <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-accent-ink">
                   <Icon size={19} aria-hidden />
                 </span>
                 <h3 className="text-base font-semibold text-ink">{category}</h3>
@@ -85,7 +84,7 @@ export function Skills({ groups }: SkillsProps) {
                 {items.map((group) => (
                   <div key={group.id}>
                     {group.subcategory && (
-                      <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-muted">
+                      <p className="mb-2 text-[0.8125rem] font-medium text-muted">
                         {group.subcategory}
                       </p>
                     )}

@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import type { Project } from "@prisma/client";
-import { GlowCard } from "@/components/ui/GlowCard";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { splitTags } from "@/lib/content";
 
@@ -14,10 +13,10 @@ export function Projects({ items }: ProjectsProps) {
 
   return (
     <section id="projects" aria-labelledby="projects-heading" className="mx-auto max-w-6xl px-6 py-14 md:py-20">
-      <SectionHeading id="projects-heading" eyebrow="Seçili işler" title="Projeler" />
+      <SectionHeading id="projects-heading" title="Projeler" />
 
-      <div className="mt-12 grid gap-6">
-        {items.map((project, index) => {
+      <div className="mt-8 grid gap-6">
+        {items.map((project) => {
           const details = [
             { label: "Amaç", value: project.mission },
             { label: "Öne çıkan özellik", value: project.keyFeature },
@@ -25,8 +24,7 @@ export function Projects({ items }: ProjectsProps) {
           ].filter((detail) => detail.value);
 
           return (
-            <div key={project.id} className="reveal">
-              <GlowCard className="overflow-hidden">
+            <div key={project.id} className="card overflow-hidden">
                 <article className="flex flex-col md:flex-row">
                   {project.coverImage && (
                     <div className="relative aspect-[16/9] w-full shrink-0 bg-surface-2 md:aspect-auto md:w-80">
@@ -43,13 +41,10 @@ export function Projects({ items }: ProjectsProps) {
                   <div className="flex-1 p-6 md:p-8">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <span className="font-mono text-xs text-accent-ink">
-                          {String(index + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
-                        </span>
-                        <h3 className="mt-1 text-xl font-semibold text-ink">{project.title}</h3>
+                        <h3 className="text-xl font-semibold text-ink">{project.title}</h3>
                         {(project.eyebrow1 || project.eyebrow2) && (
                           <p className="mt-1 text-sm text-muted">
-                            {[project.eyebrow1, project.eyebrow2].filter(Boolean).join(" · ")}
+                            {[project.eyebrow1, project.eyebrow2].filter(Boolean).join(", ")}
                           </p>
                         )}
                       </div>
@@ -76,7 +71,7 @@ export function Projects({ items }: ProjectsProps) {
                       <dl className="mt-5 grid gap-4 sm:grid-cols-3">
                         {details.map((detail) => (
                           <div key={detail.label}>
-                            <dt className="text-xs font-semibold uppercase tracking-wider text-muted">
+                            <dt className="text-[0.8125rem] font-medium text-muted">
                               {detail.label}
                             </dt>
                             <dd className="mt-1 text-sm text-ink">{detail.value}</dd>
@@ -96,7 +91,6 @@ export function Projects({ items }: ProjectsProps) {
                     )}
                   </div>
                 </article>
-              </GlowCard>
             </div>
           );
         })}

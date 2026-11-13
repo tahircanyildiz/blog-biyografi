@@ -99,19 +99,16 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
       <SiteHeader />
 
       <main id="main" className="flex-1">
-        <section className="relative isolate overflow-hidden border-b border-border">
-          <div aria-hidden className="hero-aurora -z-10" />
-          <div aria-hidden className="hero-grid -z-10" />
-
-          <div className="mx-auto max-w-6xl px-6 pb-14 pt-8 md:pb-20 md:pt-12">
+        <section className="border-b border-border">
+          <div className="mx-auto max-w-6xl px-6 pb-12 pt-8 md:pb-16 md:pt-12">
             <Breadcrumbs items={crumbs} />
-            <h1 className="mt-6 font-serif text-5xl font-semibold tracking-tight text-balance text-ink md:text-6xl">
+            <h1 className="mt-6 font-serif text-5xl font-bold tracking-[-0.025em] text-ink md:text-6xl">
               {title}
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-relaxed text-ink-2">{description}</p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <form action="/blog" role="search" className="relative w-full sm:max-w-md">
+              <form id="arama" action="/blog" role="search" className="relative w-full scroll-mt-28 sm:max-w-md">
                 <label htmlFor="blog-search" className="sr-only">
                   Yazılarda ara
                 </label>
@@ -126,7 +123,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                   name="q"
                   defaultValue={query}
                   placeholder={`${posts.length} yazı içinde ara…`}
-                  className="h-12 w-full rounded-full border border-border bg-surface/80 pl-11 pr-4 text-ink shadow-sm outline-none backdrop-blur transition-colors placeholder:text-muted focus:border-accent-ink"
+                  className="h-12 w-full rounded-lg border border-border bg-surface pl-11 pr-4 text-base text-ink transition-colors placeholder:text-muted hover:border-border-hover"
                 />
               </form>
               <a href="/rss.xml" className="btn btn-secondary h-12">
@@ -158,16 +155,14 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
           {featured && (
             <div className="mb-10">
-              <PostCard post={featured} variant="featured" headingLevel="h2" wide priority />
+              <PostCard post={featured} variant="featured" headingLevel="h2" priority />
             </div>
           )}
 
           {grid.length > 0 ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {grid.map((post, index) => (
-                <div key={post.id} className={index < 3 ? "" : "reveal"}>
-                  <PostCard post={post} headingLevel="h2" priority={!featured && index === 0} />
-                </div>
+                <PostCard key={post.id} post={post} headingLevel="h2" priority={!featured && index === 0} />
               ))}
             </div>
           ) : (
