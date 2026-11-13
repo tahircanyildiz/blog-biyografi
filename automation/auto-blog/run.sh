@@ -103,6 +103,25 @@ is_due() {
   return 0
 }
 
+# Arka planda açılan uyarı penceresi: betiği bekletmez (zamanlayıcı plist'inde AbandonProcessGroup açık)
+notify_bg() {
+  local title=${1//\"/\\\"} body=${2//\"/\\\"}
+  ( osascript -e "display dialog \"$body\" with title \"Blog otomasyonu — $title\" buttons {\"Tamam\"} default button \"Tamam\" with icon caution giving up after 72000" >/dev/null 2>&1 & )
+}
+
+# LobsterLead yazılarının kapak görsellerini günde bir kez (12:30'dan sonra) denetle
+check_covers() {
+  local marker="$logs/$today.kapak-kontrol" out
+  (( 10#$(date +%H%M) >= 1230 )) || return 0
+  [[ -f $marker ]] && return 0
+  touch "$marker"
+  out=$(node "$here/lib/check-covers.mjs" "$home_dir/kapak-uyarilari.json" 2>>"$log") || return 0
+  if [[ -n $out ]]; then
+    echo "$(date) Kapak uyarısı: $out" >> "$log"
+    notify_bg "Uygun olmayan görsel" "Son yazılarda uygun olmayan görsel bulundu:\n\n$out\n\nBlog yönetim panelinden değiştirebilir ya da Claude'a 'kapağı düzelt' diyebilirsin."
+  fi
+}
+
 mkdir -p "$drafts" "$logs"
 [[ -f $topics ]] || cp "$here/topics-log.md" "$topics"
 today=$(date +%Y-%m-%d)
@@ -111,6 +130,7 @@ log="$logs/$today.log"
 # Zamanlayıcı modu: başka çalıştırma sürüyorsa ya da yazı zamanı gelmediyse sessizce çık
 if [[ ${1:-} == "--zamanlayici" ]]; then
   [[ -d $home_dir/.lock ]] && exit 0
+  check_covers
   is_due || exit 0
 fi
 
