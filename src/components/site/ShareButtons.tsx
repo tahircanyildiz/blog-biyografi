@@ -7,7 +7,7 @@ interface ShareButtonsProps {
 }
 
 const linkClass =
-  "inline-flex size-10 items-center justify-center rounded-full border border-border bg-surface text-ink-2 transition-colors hover:border-accent-ink/60 hover:text-accent-ink";
+  "inline-flex size-10 items-center justify-center rounded-md border border-border text-ink-2 transition-colors hover:border-border-hover hover:text-accent-ink";
 
 /** Harici script yüklemeden paylaşım bağlantıları (performans + gizlilik). */
 export function ShareButtons({ url, title }: ShareButtonsProps) {

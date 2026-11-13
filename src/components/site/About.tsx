@@ -1,15 +1,5 @@
-import Link from "next/link";
-import {
-  ArrowRight,
-  Briefcase,
-  GraduationCap,
-  MapPin,
-  Newspaper,
-  Sparkles,
-  type LucideIcon,
-} from "lucide-react";
 import type { Education, Experience, SiteSettings, SkillGroup } from "@prisma/client";
-import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Section } from "@/components/ui/SectionHeading";
 import { isOngoing, tidy } from "@/lib/site";
 
 interface AboutProps {
@@ -17,126 +7,64 @@ interface AboutProps {
   experience: Experience[];
   education: Education[];
   skills: SkillGroup[];
-  postCount: number;
 }
 
 interface Fact {
-  icon: LucideIcon;
   label: string;
-  title: string;
+  value: string;
   detail?: string;
-  href?: string;
 }
 
 /**
- * Bento düzeninde kısa künye. Bio, hero'da zaten gösteriliyorsa (tagline
- * boşken hero bio'yu gösterir) burada tekrar edilmez — aynı paragrafın
- * sayfada iki kez geçmesi hem okuru hem arama motorunu yoruyordu.
+ * Düz metin biyografi + kısa künye (dl). Hero, tagline boşken bio'yu gösterir;
+ * o durumda bio burada tekrar edilmez.
  */
-export function About({ settings, experience, education, skills, postCount }: AboutProps) {
+export function About({ settings, experience, education, skills }: AboutProps) {
   // Admin'de boş satırla ayrılan paragraflar ayrı <p> olarak gösterilir.
   const bioParagraphs = (settings.bio ?? "").split(/\n\s*\n/).map(tidy).filter(Boolean);
   const showBio = Boolean(tidy(settings.tagline)) && bioParagraphs.length > 0;
 
   const current = experience.find((item) => isOngoing(item.endDate)) ?? experience[0];
   const school = education[0];
-  const location = tidy(settings.location);
   const focusAreas = Array.from(new Set(skills.map((group) => tidy(group.category)))).slice(0, 3);
 
   const facts = [
     current && {
-      icon: Briefcase,
       label: isOngoing(current.endDate) ? "Şu an" : "Son pozisyon",
-      title: tidy(current.role),
+      value: tidy(current.role),
       detail: tidy(current.company),
     },
     school && {
-      icon: GraduationCap,
       label: "Eğitim",
-      title: tidy(school.institution) || tidy(school.title),
-      detail: tidy(school.type) || tidy(school.title),
+      value: tidy(school.institution) || tidy(school.title),
+      detail: tidy(school.institution) ? tidy(school.title) : tidy(school.type),
     },
-    location && { icon: MapPin, label: "Konum", title: location },
-    focusAreas.length > 0 && {
-      icon: Sparkles,
-      label: "Odak alanları",
-      title: focusAreas.join(" · "),
-    },
-    postCount > 0 && {
-      icon: Newspaper,
-      label: "Blog",
-      title: `${postCount} yazı yayında`,
-      detail: "Tüm yazıları oku",
-      href: "/blog",
-    },
+    focusAreas.length > 0 && { label: "Odak alanları", value: focusAreas.join(", ") },
   ].filter(Boolean) as Fact[];
 
   if (!showBio && facts.length === 0) return null;
 
   return (
-    <section id="about" aria-labelledby="about-heading" className="mx-auto max-w-6xl px-6 py-14 md:py-20">
-      <SectionHeading id="about-heading" eyebrow="Tanışalım" title="Hakkımda" />
+    <Section id="about" title="Hakkımda">
+      {showBio && (
+        <div className="max-w-[65ch] space-y-5 text-lg leading-[1.7] text-ink-2">
+          {bioParagraphs.map((paragraph, index) => (
+            <p key={index}>{paragraph}</p>
+          ))}
+        </div>
+      )}
 
-      <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {showBio && (
-          <div className="reveal card relative overflow-hidden p-8 sm:col-span-2 lg:row-span-2 md:p-10">
-            <div
-              aria-hidden
-              className="absolute -right-20 -top-20 size-64 rounded-full bg-accent/15 blur-3xl"
-            />
-            <p className="relative font-serif text-2xl leading-snug text-ink md:text-[1.7rem]">
-              “{tidy(settings.tagline)}”
-            </p>
-            {bioParagraphs.map((paragraph, index) => (
-              <p
-                key={index}
-                className={`relative ${index === 0 ? "mt-6" : "mt-4"} text-lg leading-relaxed text-ink-2`}
-              >
-                {paragraph}
-              </p>
-            ))}
-          </div>
-        )}
-
-        {facts.map((fact, index) => {
-          const wideLast = !showBio && facts.length % 3 === 2 && index === facts.length - 1;
-          const content = (
-            <>
-              <span className="inline-flex size-11 items-center justify-center rounded-xl bg-accent/12 text-accent-ink ring-1 ring-accent/20">
-                <fact.icon size={20} aria-hidden />
-              </span>
-              <p className="mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-muted">
-                {fact.label}
-              </p>
-              <p className="mt-1.5 text-lg font-semibold leading-snug text-ink">{fact.title}</p>
-              {fact.detail && (
-                <p
-                  className={`mt-1 text-sm ${
-                    fact.href ? "inline-flex items-center gap-1 font-semibold text-accent-ink" : "text-muted"
-                  }`}
-                >
-                  {fact.detail}
-                  {fact.href && (
-                    <ArrowRight size={14} aria-hidden className="transition-transform group-hover:translate-x-1" />
-                  )}
-                </p>
-              )}
-            </>
-          );
-
-          const className = `reveal card p-6 ${wideLast ? "lg:col-span-2" : ""}`;
-
-          return fact.href ? (
-            <Link key={fact.label} href={fact.href} className={`group card-hover block ${className}`}>
-              {content}
-            </Link>
-          ) : (
-            <div key={fact.label} className={className}>
-              {content}
+      {facts.length > 0 && (
+        <dl className={`grid gap-x-10 sm:grid-cols-3 ${showBio ? "mt-10" : ""}`}>
+          {facts.map((fact) => (
+            <div key={fact.label} className="border-t border-border py-4">
+              <dt className="text-sm text-muted">{fact.label}</dt>
+              <dd className="mt-1 font-medium leading-snug text-ink">{fact.value}</dd>
+              {fact.detail && <dd className="text-sm text-ink-2">{fact.detail}</dd>}
             </div>
-          );
-        })}
-      </div>
-    </section>
+          ))}
+        </dl>
+      )}
+    </Section>
   );
 }

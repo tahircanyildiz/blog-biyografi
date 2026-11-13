@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { ArrowLeft, ArrowRight, CalendarDays, Clock, RefreshCw } from "lucide-react";
 import { BlogApiError } from "@lobsterlead/blog-sdk";
 import { toNextMetadata } from "@lobsterlead/blog-sdk/next";
 import { getSiteSettings, getSocialLinks } from "@/lib/content";
@@ -98,28 +97,17 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       <main id="main" className="flex-1">
         <article>
-          <header className="relative isolate overflow-hidden">
-            <div aria-hidden className="hero-aurora -z-10 opacity-50" />
+          <header>
             <div className="mx-auto max-w-3xl px-6 pt-8 md:pt-12">
               <Breadcrumbs items={crumbs} />
 
-              {tags.length > 0 && (
-                <ul className="mt-6 flex flex-wrap gap-2">
-                  {tags.map((tag) => (
-                    <li key={tag} className="chip">
-                      {tag}
-                    </li>
-                  ))}
-                </ul>
-              )}
-
-              <h1 className="mt-6 font-serif text-4xl font-semibold leading-[1.12] tracking-tight text-balance text-ink md:text-5xl">
+              <h1 className="mt-8 font-serif text-4xl font-medium leading-[1.1] tracking-[-0.02em] text-ink [overflow-wrap:break-word] md:text-[3.25rem]">
                 {post.title}
               </h1>
 
               {dek && <p className="mt-5 text-lg leading-relaxed text-ink-2 md:text-xl">{dek}</p>}
 
-              <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3 border-y border-border py-4 text-sm text-muted">
+              <div className="tabular mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-y border-border py-4 text-sm text-muted">
                 <Link href="/#about" rel="author" className="group inline-flex items-center gap-2.5">
                   {settings.profileImage && (
                     <span className="relative size-9 overflow-hidden rounded-full border border-border">
@@ -128,19 +116,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   )}
                   <span className="font-semibold text-ink group-hover:text-accent-ink">{siteName(settings)}</span>
                 </Link>
-                <span className="inline-flex items-center gap-1.5">
-                  <CalendarDays size={15} aria-hidden />
-                  <time dateTime={published}>{formatDate(published)}</time>
-                </span>
-                {post.readingTimeMinutes > 0 && (
-                  <span className="inline-flex items-center gap-1.5">
-                    <Clock size={15} aria-hidden />
-                    {post.readingTimeMinutes} dk okuma
-                  </span>
-                )}
+                <time dateTime={published}>{formatDate(published)}</time>
+                {post.readingTimeMinutes > 0 && <span>{post.readingTimeMinutes} dk okuma</span>}
                 {updatedLater && (
-                  <span className="inline-flex items-center gap-1.5">
-                    <RefreshCw size={14} aria-hidden />
+                  <span>
                     Güncellendi: <time dateTime={post.updatedAt}>{formatDate(post.updatedAt)}</time>
                   </span>
                 )}
@@ -149,7 +128,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
             {post.coverImage?.url && (
               <figure className="mx-auto mt-10 max-w-5xl px-6">
-                <div className="relative aspect-[16/9] overflow-hidden rounded-3xl border border-border bg-surface-2 shadow-2xl shadow-black/20">
+                <div className="relative aspect-[16/9] overflow-hidden rounded-lg border border-border bg-surface-2">
                   <Image
                     src={post.coverImage.url}
                     alt={post.coverImage.alt || post.title}
@@ -166,6 +145,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <div className="mx-auto max-w-3xl px-6 pb-8 pt-12 md:pt-14">
             <div className="blog-body" dangerouslySetInnerHTML={{ __html: post.bodyHtml }} />
 
+            {tags.length > 0 && (
+              <ul aria-label="Etiketler" className="mt-12 flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  <li key={tag} className="chip">
+                    {tag}
+                  </li>
+                ))}
+              </ul>
+            )}
+
             <div className="mt-14 border-t border-border pt-8">
               <ShareButtons url={url} title={post.title} />
             </div>
@@ -175,13 +164,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </div>
 
             {(newer || older) && (
-              <nav aria-label="Diğer yazılar" className="mt-10 grid gap-4 sm:grid-cols-2">
+              <nav aria-label="Diğer yazılar" className="mt-10 grid gap-6 border-t border-border pt-6 sm:grid-cols-2">
                 {older ? (
-                  <Link href={`/blog/${older.slug}`} className="group card card-hover p-5">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted">
-                      <ArrowLeft size={14} aria-hidden /> Önceki yazı
-                    </span>
-                    <span className="mt-2 line-clamp-2 block font-semibold leading-snug text-ink group-hover:text-accent-ink">
+                  <Link href={`/blog/${older.slug}`} className="group">
+                    <span className="text-sm text-muted">Önceki yazı</span>
+                    <span className="mt-1 line-clamp-2 block font-medium leading-snug text-ink group-hover:text-accent-ink">
                       {older.title}
                     </span>
                   </Link>
@@ -189,11 +176,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   <span className="hidden sm:block" />
                 )}
                 {newer && (
-                  <Link href={`/blog/${newer.slug}`} className="group card card-hover p-5 sm:text-right">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted">
-                      Sonraki yazı <ArrowRight size={14} aria-hidden />
-                    </span>
-                    <span className="mt-2 line-clamp-2 block font-semibold leading-snug text-ink group-hover:text-accent-ink">
+                  <Link href={`/blog/${newer.slug}`} className="group sm:text-right">
+                    <span className="text-sm text-muted">Sonraki yazı</span>
+                    <span className="mt-1 line-clamp-2 block font-medium leading-snug text-ink group-hover:text-accent-ink">
                       {newer.title}
                     </span>
                   </Link>
@@ -205,19 +190,17 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         {more.length > 0 && (
           <section aria-labelledby="more-posts-heading" className="mx-auto max-w-6xl px-6 py-16">
-            <div className="flex items-end justify-between gap-4">
-              <h2 id="more-posts-heading" className="font-serif text-3xl font-semibold tracking-tight text-ink">
-                Bunlar da ilginizi çekebilir
+            <div className="flex flex-wrap items-baseline justify-between gap-4 border-t border-border pt-8">
+              <h2 id="more-posts-heading" className="font-serif text-[1.75rem] font-medium tracking-[-0.015em] text-ink">
+                Benzer yazılar
               </h2>
-              <Link href="/blog" className="hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-accent-ink sm:inline-flex">
-                Tüm yazılar <ArrowRight size={16} aria-hidden />
+              <Link href="/blog" className="text-link text-sm">
+                Tüm yazılar
               </Link>
             </div>
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-8 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
               {more.map((item) => (
-                <div key={item.id} className="reveal">
-                  <PostCard post={item} />
-                </div>
+                <PostCard key={item.id} post={item} />
               ))}
             </div>
           </section>

@@ -1,100 +1,63 @@
 import type { Experience as ExperienceItem } from "@prisma/client";
-import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Section } from "@/components/ui/SectionHeading";
 import { splitTags } from "@/lib/content";
-import { isOngoing, tidy } from "@/lib/site";
+import { tidy } from "@/lib/site";
 
 interface ExperienceProps {
   items: ExperienceItem[];
 }
 
+/** Özgeçmiş düzeni: her pozisyon bir satır, aralarında ince çizgi. */
 export function Experience({ items }: ExperienceProps) {
   if (items.length === 0) return null;
 
   return (
-    <section
-      id="experience"
-      aria-labelledby="experience-heading"
-      className="mx-auto max-w-6xl px-6 py-14 md:py-20"
-    >
-      <SectionHeading id="experience-heading" eyebrow="Çalışma geçmişi" title="Deneyim" />
-
-      <ol className="relative mt-12 space-y-6 border-l border-border pl-7 md:ml-2 md:pl-10">
+    <Section id="experience" title="Deneyim">
+      <ol>
         {items.map((exp) => {
-          const ongoing = isOngoing(exp.endDate);
           const stats = [
             { label: exp.stat1Label, value: exp.stat1Value },
             { label: exp.stat2Label, value: exp.stat2Value },
             { label: exp.stat3Label, value: exp.stat3Value },
           ].filter((stat) => stat.label && stat.value);
-          const meta = [tidy(exp.company), tidy(exp.employment)].filter(Boolean);
+          const where = [tidy(exp.company), tidy(exp.employment)].filter(Boolean).join(", ");
+          const tags = exp.tags ? splitTags(exp.tags) : [];
 
           return (
-            <li key={exp.id} className="reveal relative">
-              <span
-                aria-hidden
-                className={`absolute -left-[calc(1.75rem+6.5px)] top-8 size-3 rounded-full ring-4 ring-bg md:-left-[calc(2.5rem+6.5px)] ${
-                  ongoing ? "bg-accent shadow-[0_0_0_6px] shadow-accent/25" : "bg-border-hover"
-                }`}
-              />
+            <li key={exp.id} className="border-t border-border first:border-t-0 first:pt-0 py-7">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+                <h3 className="text-lg font-semibold text-ink">{tidy(exp.role)}</h3>
+                <p className="tabular text-sm text-muted">
+                  {tidy(exp.startDate)} – {tidy(exp.endDate)}
+                </p>
+              </div>
+              {where && <p className="mt-0.5 text-ink-2">{where}</p>}
 
-              <article className="card card-hover p-6 md:p-8">
-                <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
-                  <div className="min-w-0">
-                    <h3 className="text-xl font-semibold text-ink">{tidy(exp.role)}</h3>
-                    {meta.length > 0 && (
-                      <p className="mt-1 text-sm text-muted">
-                        {meta.map((part, index) => (
-                          <span key={part}>
-                            {index > 0 && <span aria-hidden> · </span>}
-                            <span className={index === 0 ? "font-medium text-ink-2" : "capitalize"}>
-                              {part}
-                            </span>
-                          </span>
-                        ))}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {ongoing && (
-                      <span className="rounded-full bg-accent/15 px-2.5 py-1 text-xs font-semibold text-accent-ink">
-                        Güncel
-                      </span>
-                    )}
-                    <span className="chip font-mono text-xs">
-                      {tidy(exp.startDate)} – {tidy(exp.endDate)}
-                    </span>
-                  </div>
-                </div>
+              {exp.description && (
+                <p className="mt-4 max-w-[65ch] leading-relaxed text-ink-2">{tidy(exp.description)}</p>
+              )}
 
-                {exp.description && (
-                  <p className="mt-5 max-w-3xl leading-relaxed text-ink-2">{tidy(exp.description)}</p>
-                )}
+              {stats.length > 0 && (
+                <dl className="mt-4 flex flex-wrap gap-x-8 gap-y-2 text-sm">
+                  {stats.map((stat) => (
+                    <div key={stat.label} className="flex gap-2">
+                      <dt className="text-muted">{stat.label}</dt>
+                      <dd className="tabular font-medium text-ink">{stat.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
 
-                {exp.tags && (
-                  <ul className="mt-5 flex flex-wrap gap-2" aria-label="Kullanılan teknolojiler">
-                    {splitTags(exp.tags).map((tag) => (
-                      <li key={tag} className="chip">
-                        {tag}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-
-                {stats.length > 0 && (
-                  <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-4 border-t border-border pt-5">
-                    {stats.map((stat) => (
-                      <div key={stat.label} className="flex flex-col">
-                        <dt className="order-2 text-xs text-muted">{stat.label}</dt>
-                        <dd className="order-1 font-serif text-2xl font-semibold text-ink">{stat.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                )}
-              </article>
+              {tags.length > 0 && (
+                <p className="mt-4 max-w-[65ch] text-sm leading-relaxed text-muted">
+                  <span className="sr-only">Kullanılan teknolojiler: </span>
+                  {tags.join(", ")}
+                </p>
+              )}
             </li>
           );
         })}
       </ol>
-    </section>
+    </Section>
   );
 }
