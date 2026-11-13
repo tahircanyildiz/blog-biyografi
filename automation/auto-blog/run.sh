@@ -109,12 +109,11 @@ notify_bg() {
   ( osascript -e "display dialog \"$body\" with title \"Blog otomasyonu — $title\" buttons {\"Tamam\"} default button \"Tamam\" with icon caution giving up after 72000" >/dev/null 2>&1 & )
 }
 
-# LobsterLead yazılarının kapak görsellerini günde bir kez (12:30'dan sonra) denetle
+# LobsterLead yazılarının görsellerini 12:30'dan sonra her kontrolde denetle (LobsterLead 12:00'de yayınlıyor).
+# Aynı sorun için bir kez uyarır; düzelip geri dönerse yeniden uyarır (lib/check-covers.mjs).
 check_covers() {
-  local marker="$logs/$today.kapak-kontrol" out
+  local out
   (( 10#$(date +%H%M) >= 1230 )) || return 0
-  [[ -f $marker ]] && return 0
-  touch "$marker"
   out=$(node "$here/lib/check-covers.mjs" "$home_dir/kapak-uyarilari.json" 2>>"$log") || return 0
   if [[ -n $out ]]; then
     echo "$(date) Kapak uyarısı: $out" >> "$log"

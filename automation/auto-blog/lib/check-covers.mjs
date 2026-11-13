@@ -18,7 +18,7 @@ const since = Date.now() - 3 * 24 * 60 * 60 * 1000;
 const lines = [];
 
 for (const p of posts) {
-  if (new Date(p.publishedAt).getTime() < since || alerted.has(p.slug)) continue;
+  if (new Date(p.publishedAt).getTime() < since) continue;
   const detail = await (await fetch(`${BASE}/${p.slug}?locale=tr`)).json();
   const urls = [
     detail.post?.coverImage?.url,
@@ -31,9 +31,12 @@ for (const p of posts) {
     if (url.includes('/shared/documents/')) reasons.add('paylaşılan dokümanlardan alınmış görsel (ekran görüntüsü olabilir)');
     else if (!ALLOWED.some((prefix) => url.startsWith(prefix))) reasons.add(`beklenmeyen kaynaktan görsel: ${new URL(url).host}`);
   }
-  if (reasons.size) {
+  if (reasons.size && !alerted.has(p.slug)) {
     lines.push(`• ${p.title} — ${[...reasons].join('; ')}`);
     alerted.add(p.slug);
+  } else if (!reasons.size) {
+    // Düzelmiş: kayıttan çıkar ki görsel sonradan geri dönerse yeniden uyarılsın
+    alerted.delete(p.slug);
   }
 }
 
