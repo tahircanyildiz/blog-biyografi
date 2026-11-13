@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight, Clock, Newspaper } from "lucide-react";
 import type { PostSummary } from "@lobsterlead/blog-sdk";
-import { formatDate } from "@/lib/posts";
+import { formatDate, isRecent } from "@/lib/posts";
 
-type Variant = "featured" | "default";
+type Variant = "featured" | "default" | "compact";
 
 interface PostCardProps {
   post: PostSummary;
@@ -21,10 +22,22 @@ export function PostMeta({ post, className = "" }: { post: PostSummary; classNam
   const date = formatDate(iso);
 
   return (
-    <p className={`tabular flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted ${className}`}>
+    <div
+      className={`flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-muted ${className}`}
+    >
+      {isRecent(post.publishedAt) && (
+        <span className="rounded-full bg-accent px-2 py-0.5 text-[0.68rem] font-semibold uppercase tracking-wider text-on-accent">
+          Yeni
+        </span>
+      )}
       {date && <time dateTime={iso}>{date}</time>}
-      {post.readingTimeMinutes > 0 && <span>{post.readingTimeMinutes} dk okuma</span>}
-    </p>
+      {post.readingTimeMinutes > 0 && (
+        <span className="inline-flex items-center gap-1">
+          <Clock size={13} aria-hidden />
+          {post.readingTimeMinutes} dk okuma
+        </span>
+      )}
+    </div>
   );
 }
 
@@ -37,7 +50,13 @@ function Cover({
   sizes: string;
   priority?: boolean;
 }) {
-  if (!post.coverImage?.url) return null;
+  if (!post.coverImage?.url) {
+    return (
+      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-accent/25 via-surface-2 to-accent-2/15 text-accent-ink">
+        <Newspaper size={28} aria-hidden />
+      </div>
+    );
+  }
 
   return (
     <Image
@@ -46,15 +65,11 @@ function Cover({
       fill
       sizes={sizes}
       priority={priority}
-      className="object-cover"
+      className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
     />
   );
 }
 
-/**
- * Yazı kartı: kutu yok, görsel + metin. Kartın tamamı tıklanabilir
- * (stretched link), ama bağlantı metni yalnızca başlık.
- */
 export function PostCard({
   post,
   variant = "default",
@@ -64,73 +79,85 @@ export function PostCard({
 }: PostCardProps) {
   const Heading = headingLevel;
   const href = `/blog/${post.slug}`;
-  const featured = variant === "featured";
+
+  if (variant === "featured") {
+    return (
+      <article
+        className={`group card card-hover relative overflow-hidden focus-within:ring-2 focus-within:ring-accent-ink ${
+          wide ? "grid lg:grid-cols-[1.35fr_1fr]" : "flex h-full flex-col"
+        }`}
+      >
+        <div
+          className={`relative overflow-hidden bg-surface-2 ${
+            wide ? "aspect-[16/9] lg:aspect-auto lg:min-h-[24rem]" : "aspect-[16/9]"
+          }`}
+        >
+          <Cover
+            post={post}
+            priority={priority}
+            sizes={wide ? "(min-width: 1024px) 640px, 100vw" : "(min-width: 1024px) 680px, 100vw"}
+          />
+        </div>
+        <div className="flex flex-1 flex-col p-6 md:p-8">
+          <PostMeta post={post} />
+          <Heading className="mt-3 font-serif text-2xl font-semibold leading-snug tracking-tight text-balance text-ink md:text-3xl">
+            <Link href={href} className="stretched-link focus-visible:outline-none">
+              {post.title}
+            </Link>
+          </Heading>
+          {post.excerpt && (
+            <p className="mt-3 line-clamp-3 leading-relaxed text-muted">{post.excerpt}</p>
+          )}
+          <span
+            aria-hidden
+            className="mt-auto inline-flex items-center gap-1.5 pt-6 text-sm font-semibold text-accent-ink"
+          >
+            Yazıyı oku
+            <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+          </span>
+        </div>
+      </article>
+    );
+  }
+
+  if (variant === "compact") {
+    return (
+      <article className="group card card-hover relative flex h-full items-center gap-4 rounded-2xl p-3 focus-within:ring-2 focus-within:ring-accent-ink">
+        <div className="relative aspect-[4/3] w-28 shrink-0 overflow-hidden rounded-xl bg-surface-2 sm:w-32">
+          <Cover post={post} sizes="128px" />
+        </div>
+        <div className="min-w-0 flex-1 pr-2">
+          <PostMeta post={post} />
+          <Heading className="mt-1.5 line-clamp-2 text-[0.95rem] font-semibold leading-snug text-ink transition-colors group-hover:text-accent-ink">
+            <Link href={href} className="stretched-link focus-visible:outline-none">
+              {post.title}
+            </Link>
+          </Heading>
+        </div>
+      </article>
+    );
+  }
 
   return (
-    <article
-      className={`group relative ${
-        featured && wide ? "grid gap-6 md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] md:items-center md:gap-10" : "flex flex-col"
-      }`}
-    >
-      <div className="relative aspect-[16/9] overflow-hidden rounded-lg border border-border bg-surface-2">
+    <article className="group card card-hover relative flex h-full flex-col overflow-hidden rounded-2xl focus-within:ring-2 focus-within:ring-accent-ink">
+      <div className="relative aspect-[16/9] overflow-hidden bg-surface-2">
         <Cover
           post={post}
           priority={priority}
-          sizes={
-            featured
-              ? "(min-width: 1024px) 640px, 100vw"
-              : "(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw"
-          }
+          sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw"
         />
       </div>
-
-      <div className={featured && wide ? "" : featured ? "mt-5" : "mt-4"}>
+      <div className="flex flex-1 flex-col p-5">
         <PostMeta post={post} />
-        <Heading
-          className={`mt-2 text-ink transition-colors group-hover:text-accent-ink ${
-            featured
-              ? "font-serif text-[1.75rem] font-medium leading-[1.15] tracking-[-0.015em] md:text-[2rem]"
-              : "text-lg font-semibold leading-snug"
-          }`}
-        >
+        <Heading className="mt-2.5 line-clamp-3 text-lg font-semibold leading-snug text-ink transition-colors group-hover:text-accent-ink">
           <Link href={href} className="stretched-link focus-visible:outline-none">
             {post.title}
           </Link>
         </Heading>
         {post.excerpt && (
-          <p
-            className={`mt-3 leading-relaxed text-muted ${
-              featured ? "line-clamp-3 max-w-[60ch]" : "line-clamp-2 text-[0.9375rem]"
-            }`}
-          >
-            {post.excerpt}
-          </p>
+          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted">{post.excerpt}</p>
         )}
       </div>
     </article>
-  );
-}
-
-/** Ana sayfadaki yazı listesi satırı: tarih solda, başlık sağda, aralarında ince çizgi. */
-export function PostRow({ post }: { post: PostSummary }) {
-  const iso = post.publishedAt ?? post.updatedAt;
-  const date = formatDate(iso);
-
-  return (
-    <li className="group relative grid gap-1 border-t border-border py-4 sm:grid-cols-[8.5rem_minmax(0,1fr)] sm:gap-6">
-      <time dateTime={iso} className="tabular pt-0.5 text-sm text-muted">
-        {date}
-      </time>
-      <div className="min-w-0">
-        <h3 className="font-medium leading-snug text-ink transition-colors group-hover:text-accent-ink">
-          <Link href={`/blog/${post.slug}`} className="stretched-link focus-visible:outline-none">
-            {post.title}
-          </Link>
-        </h3>
-        {post.readingTimeMinutes > 0 && (
-          <p className="mt-1 text-sm text-muted">{post.readingTimeMinutes} dk okuma</p>
-        )}
-      </div>
-    </li>
   );
 }

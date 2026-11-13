@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Sans, Newsreader } from "next/font/google";
+import { Fraunces, Inter } from "next/font/google";
 import { GoogleAnalytics } from "@/components/site/GoogleAnalytics";
 import { getSiteSettings } from "@/lib/content";
 import { SITE_LOCALE, SITE_URL, absoluteUrl } from "@/lib/site";
@@ -8,21 +8,17 @@ import "./globals.css";
 
 // Türkçe karakterler (ı, ş, ğ, İ) "latin-ext" alt kümesinde; olmadan bu
 // harfler sistem fontuyla çiziliyor ve metin karışık görünüyordu.
-// Gövde: IBM Plex Sans — mühendislik kökenli, Türkçe'yi iyi çizen bir grotesk.
-// Başlıklar: Newsreader — optik boyutlu (opsz) editoryal serif; büyük punto
-// başlıklarda ince, metin boyutunda dolgun çizilir.
-const plexSans = IBM_Plex_Sans({
-  variable: "--font-body",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin", "latin-ext"],
   display: "swap",
-  weight: ["400", "500", "600"],
 });
 
-const newsreader = Newsreader({
-  variable: "--font-display",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin", "latin-ext"],
   display: "swap",
-  axes: ["opsz"],
+  weight: ["600"],
 });
 
 // Root layout artık her istekte SiteSettings okuyor (GA4/GSC ayarları
@@ -100,7 +96,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="tr"
-      className={`${plexSans.variable} ${newsreader.variable} h-full`}
+      className={`${inter.variable} ${fraunces.variable} h-full`}
       suppressHydrationWarning
     >
       <head>

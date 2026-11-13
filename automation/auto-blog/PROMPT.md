@@ -81,7 +81,6 @@ Zorunlu öğeler: okuma süresi, kalın giriş, içindekiler (tüm h2/h3'lere `i
 ### 5. Görselleri üret (3 adet)
 - Şablonlar: `automation/auto-blog/templates/kapak.html` (1600×900), `kartlar.html`, `akis.html`. Read ile okuyup Write ile taslak klasörüne yeni bir dosya olarak yaz; metinleri ve düzeni konuya göre uyarla; `<link rel="stylesheet" href="base.css">` satırını koru (render.sh stili ve fontları ekler). Palet ve fontları değiştirme.
 - 1 kapak + gövdede 2 bilgilendirici görsel (karşılaştırma kartları, akış şeması, mimari/diyagram). Renk tek başına anlam taşımasın; ✓/✕ ve metin de kullan. Veri grafiği çiziyorsan sıfırdan başlayan eksen, etiketli değerler ve açıklama kutusu kullan.
-- Görsellerde "yapay zekâ şablonu" kalıplarından kaçın: parlama/radyal gradyan zemin, ızgara deseni, büyük harfli ve harf aralığı açılmış etiketler, hap (pill) rozetler, gradyan metin, emoji ikon kullanma. Düz zemin, net tipografi, gerçek veri ve gerçek komut/kod adları yeterli.
 - Render: `zsh automation/auto-blog/lib/render.sh <taslak>/kapak.html 1600 900 <taslak>/images/<slug>-kapak.webp`
 - Her görselin `.png` kopyasını Read ile aç ve kontrol et: taşan/çakışan metin, kırpılma, Türkçe karakter sorunu, alttaki fazla boşluk. Sorun varsa düzeltip yeniden render et. Gövde görsellerinde HTML'deki `height` ile render yüksekliği aynı olmalı.
 - Dosya adları: küçük harf, tire, `.webp` (ör. `nodejs-26-lts-temporal-api.webp`). `post.html`'deki `src` adresleri `https://www.tahircanyildiz.com/uploads/<dosya>.webp` olmalı (yayınlarken oraya yüklenecek).

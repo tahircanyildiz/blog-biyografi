@@ -1,5 +1,12 @@
+import {
+  Award,
+  Code2,
+  GraduationCap,
+  Smartphone,
+  type LucideIcon,
+} from "lucide-react";
 import type { Education as EducationItem } from "@prisma/client";
-import { Section } from "@/components/ui/SectionHeading";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { splitLines } from "@/lib/content";
 import { tidy } from "@/lib/site";
 
@@ -7,39 +14,64 @@ interface EducationProps {
   items: EducationItem[];
 }
 
+// Admin'deki "icon" alanı değerleri — emoji yerine tutarlı çizgi ikonlar.
+const ICON_MAP: Record<string, LucideIcon> = {
+  graduation: GraduationCap,
+  award: Award,
+  certificate: Award,
+  mobile: Smartphone,
+  code: Code2,
+};
+
 export function Education({ items }: EducationProps) {
   if (items.length === 0) return null;
 
   return (
-    <Section id="education" title="Eğitim">
-      <ol>
+    <section
+      id="education"
+      aria-labelledby="education-heading"
+      className="mx-auto max-w-6xl px-6 py-14 md:py-20"
+    >
+      <SectionHeading id="education-heading" eyebrow="Akademik geçmiş" title="Eğitim" />
+
+      <div className="mt-12 grid gap-4 md:grid-cols-2">
         {items.map((edu) => {
+          const Icon = ICON_MAP[edu.icon] ?? GraduationCap;
           const bullets = splitLines(edu.bullets);
           // "Üniversite" gibi genel bir başlık girilmişse okulu öne çıkar.
           const headline = tidy(edu.institution) || tidy(edu.title);
-          const subline = [tidy(edu.institution) ? tidy(edu.title) : "", tidy(edu.type)]
-            .filter(Boolean)
-            .join(", ");
+          const subline = tidy(edu.institution) ? tidy(edu.title) : "";
 
           return (
-            <li key={edu.id} className="border-t border-border first:border-t-0 first:pt-0 py-7">
-              <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-                <h3 className="text-lg font-semibold text-ink">{headline}</h3>
-                {edu.period && <p className="tabular text-sm text-muted">{tidy(edu.period)}</p>}
-              </div>
-              {subline && <p className="mt-0.5 text-ink-2">{subline}</p>}
+            <article key={edu.id} className="reveal card card-hover flex gap-5 p-6 md:p-8">
+              <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-2xl bg-accent/12 text-accent-ink ring-1 ring-accent/20">
+                <Icon size={22} aria-hidden />
+              </span>
 
-              {bullets.length > 0 && (
-                <ul className="mt-4 max-w-[65ch] list-disc space-y-1.5 pl-5 leading-relaxed text-ink-2 marker:text-muted">
-                  {bullets.map((bullet) => (
-                    <li key={bullet}>{bullet}</li>
-                  ))}
-                </ul>
-              )}
-            </li>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-lg font-semibold text-ink">{headline}</h3>
+                {(subline || edu.type) && (
+                  <p className="mt-1 text-ink-2">
+                    {[edu.type && tidy(edu.type), subline].filter(Boolean).join(" · ")}
+                  </p>
+                )}
+                {edu.period && <p className="chip mt-3 font-mono text-xs">{tidy(edu.period)}</p>}
+
+                {bullets.length > 0 && (
+                  <ul className="mt-5 space-y-2 border-t border-border pt-4 text-sm text-ink-2">
+                    {bullets.map((bullet) => (
+                      <li key={bullet} className="flex gap-2.5">
+                        <span aria-hidden className="mt-2 size-1.5 shrink-0 rounded-full bg-accent-ink" />
+                        {bullet}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </article>
           );
         })}
-      </ol>
-    </Section>
+      </div>
+    </section>
   );
 }

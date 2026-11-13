@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -15,7 +15,6 @@ const LINKS = [
   { href: "/#about", label: "Hakkımda" },
   { href: "/#experience", label: "Deneyim" },
   { href: "/#skills", label: "Yetenekler" },
-  { href: "/#contact", label: "İletişim" },
 ];
 
 interface NavProps {
@@ -50,8 +49,10 @@ export function Nav({ name, roleTitle }: NavProps) {
 
   return (
     <header
-      className={`sticky top-0 z-50 bg-bg transition-[border-color] duration-200 ${
-        scrolled || menuOpen ? "border-b border-border" : "border-b border-transparent"
+      className={`sticky top-0 z-50 transition-[background-color,border-color,box-shadow] duration-300 ${
+        scrolled || menuOpen
+          ? "border-b border-border bg-bg/80 shadow-[0_10px_30px_-20px_rgb(0_0_0/0.5)] backdrop-blur-xl"
+          : "border-b border-transparent bg-transparent"
       }`}
     >
       <nav
@@ -68,7 +69,7 @@ export function Nav({ name, roleTitle }: NavProps) {
           </span>
         </Link>
 
-        <div className="hidden items-center gap-7 md:flex">
+        <div className="hidden items-center gap-1 md:flex">
           {LINKS.map((link) => {
             const active = isActive(link.href);
             return (
@@ -76,10 +77,10 @@ export function Nav({ name, roleTitle }: NavProps) {
                 key={link.href}
                 href={link.href}
                 aria-current={active ? "page" : undefined}
-                className={`py-2 text-sm transition-colors ${
+                className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                   active
-                    ? "text-ink underline decoration-accent-ink decoration-2 underline-offset-[10px]"
-                    : "text-muted hover:text-ink"
+                    ? "bg-surface-2 text-ink"
+                    : "text-muted hover:bg-surface-2/60 hover:text-ink"
                 }`}
               >
                 {link.label}
@@ -90,10 +91,14 @@ export function Nav({ name, roleTitle }: NavProps) {
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
+          <Link href="/#contact" className="btn btn-primary btn-sm hidden md:inline-flex">
+            İletişime geç
+            <ArrowUpRight size={16} aria-hidden />
+          </Link>
           <button
             type="button"
             onClick={() => setMenuOpen((open) => !open)}
-            className="inline-flex size-10 items-center justify-center rounded-md border border-border text-ink md:hidden"
+            className="inline-flex size-10 items-center justify-center rounded-full border border-border bg-surface/60 text-ink md:hidden"
             aria-label={menuOpen ? "Menüyü kapat" : "Menüyü aç"}
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
@@ -117,6 +122,13 @@ export function Nav({ name, roleTitle }: NavProps) {
                 {link.label}
               </Link>
             ))}
+            <Link
+              href="/#contact"
+              onClick={() => setMenuOpen(false)}
+              className="btn btn-primary mt-5"
+            >
+              İletişime geç
+            </Link>
           </div>
         </div>
       )}

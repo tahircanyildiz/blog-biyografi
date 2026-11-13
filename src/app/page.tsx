@@ -65,9 +65,20 @@ export default async function HomePage() {
       <SiteHeader />
 
       <main id="main" className="flex-1">
-        <Hero settings={settings} socialLinks={socialLinks} />
-        <LatestPosts posts={posts.slice(0, 7)} totalCount={posts.length} />
-        <About settings={settings} experience={experience} education={education} skills={skills} />
+        <Hero
+          settings={settings}
+          socialLinks={socialLinks}
+          latestPost={posts[0] ?? null}
+          postCount={posts.length}
+        />
+        <LatestPosts posts={posts.slice(0, 5)} totalCount={posts.length} />
+        <About
+          settings={settings}
+          experience={experience}
+          education={education}
+          skills={skills}
+          postCount={posts.length}
+        />
         <Experience items={experience} />
         <Projects items={projects} />
         <Skills groups={skills} />

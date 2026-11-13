@@ -1,6 +1,8 @@
 import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import type { Project } from "@prisma/client";
-import { Section } from "@/components/ui/SectionHeading";
+import { GlowCard } from "@/components/ui/GlowCard";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { splitTags } from "@/lib/content";
 
 interface ProjectsProps {
@@ -11,73 +13,94 @@ export function Projects({ items }: ProjectsProps) {
   if (items.length === 0) return null;
 
   return (
-    <Section id="projects" title="Projeler">
-      <ul>
-        {items.map((project) => {
+    <section id="projects" aria-labelledby="projects-heading" className="mx-auto max-w-6xl px-6 py-14 md:py-20">
+      <SectionHeading id="projects-heading" eyebrow="Seçili işler" title="Projeler" />
+
+      <div className="mt-12 grid gap-6">
+        {items.map((project, index) => {
           const details = [
             { label: "Amaç", value: project.mission },
             { label: "Öne çıkan özellik", value: project.keyFeature },
             { label: "Müşteri", value: project.clientName },
           ].filter((detail) => detail.value);
-          const kind = [project.eyebrow1, project.eyebrow2].filter(Boolean).join(", ");
 
           return (
-            <li
-              key={project.id}
-              className={`grid gap-6 border-t border-border first:border-t-0 first:pt-0 py-8 ${
-                project.coverImage ? "md:grid-cols-[16rem_minmax(0,1fr)]" : ""
-              }`}
-            >
-              {project.coverImage && (
-                <div className="relative aspect-[16/10] overflow-hidden rounded-lg border border-border bg-surface-2">
-                  <Image
-                    src={project.coverImage}
-                    alt={project.title}
-                    fill
-                    sizes="(min-width: 768px) 256px, 100vw"
-                    className="object-cover"
-                  />
-                </div>
-              )}
+            <div key={project.id} className="reveal">
+              <GlowCard className="overflow-hidden">
+                <article className="flex flex-col md:flex-row">
+                  {project.coverImage && (
+                    <div className="relative aspect-[16/9] w-full shrink-0 bg-surface-2 md:aspect-auto md:w-80">
+                      <Image
+                        src={project.coverImage}
+                        alt={project.title}
+                        fill
+                        sizes="(min-width: 768px) 320px, 100vw"
+                        className="object-cover"
+                      />
+                    </div>
+                  )}
 
-              <article className="min-w-0">
-                <h3 className="text-lg font-semibold text-ink">{project.title}</h3>
-                {kind && <p className="mt-0.5 text-ink-2">{kind}</p>}
-
-                {project.description && (
-                  <p className="mt-4 max-w-[65ch] leading-relaxed text-ink-2">{project.description}</p>
-                )}
-
-                {details.length > 0 && (
-                  <dl className="mt-5 grid gap-x-8 gap-y-3 sm:grid-cols-3">
-                    {details.map((detail) => (
-                      <div key={detail.label}>
-                        <dt className="text-sm text-muted">{detail.label}</dt>
-                        <dd className="mt-0.5 text-sm text-ink">{detail.value}</dd>
+                  <div className="flex-1 p-6 md:p-8">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <span className="font-mono text-xs text-accent-ink">
+                          {String(index + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
+                        </span>
+                        <h3 className="mt-1 text-xl font-semibold text-ink">{project.title}</h3>
+                        {(project.eyebrow1 || project.eyebrow2) && (
+                          <p className="mt-1 text-sm text-muted">
+                            {[project.eyebrow1, project.eyebrow2].filter(Boolean).join(" · ")}
+                          </p>
+                        )}
                       </div>
-                    ))}
-                  </dl>
-                )}
 
-                {project.tags && (
-                  <p className="mt-4 text-sm text-muted">{splitTags(project.tags).join(", ")}</p>
-                )}
+                      {project.liveUrl && (
+                        <a
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-secondary btn-sm shrink-0"
+                        >
+                          İncele
+                          <ArrowUpRight size={16} aria-hidden />
+                          <span className="sr-only">: {project.title}</span>
+                        </a>
+                      )}
+                    </div>
 
-                {project.liveUrl && (
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-link mt-4 inline-block text-sm"
-                  >
-                    Projeyi incele<span className="sr-only">: {project.title}</span>
-                  </a>
-                )}
-              </article>
-            </li>
+                    {project.description && (
+                      <p className="mt-4 max-w-prose leading-relaxed text-ink-2">{project.description}</p>
+                    )}
+
+                    {details.length > 0 && (
+                      <dl className="mt-5 grid gap-4 sm:grid-cols-3">
+                        {details.map((detail) => (
+                          <div key={detail.label}>
+                            <dt className="text-xs font-semibold uppercase tracking-wider text-muted">
+                              {detail.label}
+                            </dt>
+                            <dd className="mt-1 text-sm text-ink">{detail.value}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    )}
+
+                    {project.tags && (
+                      <ul className="mt-5 flex flex-wrap gap-1.5">
+                        {splitTags(project.tags).map((tag) => (
+                          <li key={tag} className="chip">
+                            {tag}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </article>
+              </GlowCard>
+            </div>
           );
         })}
-      </ul>
-    </Section>
+      </div>
+    </section>
   );
 }

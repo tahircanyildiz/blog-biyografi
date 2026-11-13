@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Search } from "lucide-react";
+import { Rss, Search, X } from "lucide-react";
 import { getSiteSettings } from "@/lib/content";
 import { getAllPosts, paginate, searchPosts, totalPages } from "@/lib/posts";
 import {
@@ -99,13 +99,16 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
       <SiteHeader />
 
       <main id="main" className="flex-1">
-        <section>
-          <div className="mx-auto max-w-6xl px-6 pb-10 pt-8 md:pb-14 md:pt-12">
+        <section className="relative isolate overflow-hidden border-b border-border">
+          <div aria-hidden className="hero-aurora -z-10" />
+          <div aria-hidden className="hero-grid -z-10" />
+
+          <div className="mx-auto max-w-6xl px-6 pb-14 pt-8 md:pb-20 md:pt-12">
             <Breadcrumbs items={crumbs} />
-            <h1 className="mt-8 max-w-[18ch] font-serif text-5xl font-medium leading-[1.02] tracking-[-0.025em] text-ink md:text-[4.25rem]">
+            <h1 className="mt-6 font-serif text-5xl font-semibold tracking-tight text-balance text-ink md:text-6xl">
               {title}
             </h1>
-            <p className="mt-6 max-w-[60ch] text-lg leading-relaxed text-ink-2">{description}</p>
+            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-ink-2">{description}</p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
               <form action="/blog" role="search" className="relative w-full sm:max-w-md">
@@ -123,24 +126,25 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                   name="q"
                   defaultValue={query}
                   placeholder={`${posts.length} yazı içinde ara…`}
-                  className="h-11 w-full rounded-lg border border-border bg-surface pl-11 pr-4 text-base text-ink transition-colors placeholder:text-muted hover:border-border-hover"
+                  className="h-12 w-full rounded-full border border-border bg-surface/80 pl-11 pr-4 text-ink shadow-sm outline-none backdrop-blur transition-colors placeholder:text-muted focus:border-accent-ink"
                 />
               </form>
-              <a href="/rss.xml" className="text-link text-sm sm:ml-2">
-                RSS ile takip et
+              <a href="/rss.xml" className="btn btn-secondary h-12">
+                <Rss size={16} aria-hidden />
+                RSS
               </a>
             </div>
           </div>
         </section>
 
-        <section aria-label="Yazılar" className="mx-auto max-w-6xl px-6 pb-16">
-          <div className="border-t border-border pt-10">
+        <section aria-label="Yazılar" className="mx-auto max-w-6xl px-6 py-12 md:py-16">
           {query && (
             <div className="mb-8 flex flex-wrap items-center gap-3 text-ink-2" role="status">
               <span>
                 <strong className="text-ink">“{query}”</strong> için {results.length} sonuç bulundu.
               </span>
-              <Link href="/blog" className="text-link text-sm">
+              <Link href="/blog" className="chip hover:text-accent-ink">
+                <X size={14} aria-hidden />
                 Aramayı temizle
               </Link>
             </div>
@@ -153,20 +157,22 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           )}
 
           {featured && (
-            <div className="mb-14">
+            <div className="mb-10">
               <PostCard post={featured} variant="featured" headingLevel="h2" wide priority />
             </div>
           )}
 
           {grid.length > 0 ? (
-            <div className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {grid.map((post, index) => (
-                <PostCard key={post.id} post={post} headingLevel="h2" priority={!featured && index === 0} />
+                <div key={post.id} className={index < 3 ? "" : "reveal"}>
+                  <PostCard post={post} headingLevel="h2" priority={!featured && index === 0} />
+                </div>
               ))}
             </div>
           ) : (
             !featured && (
-              <div className="py-10">
+              <div className="card p-10 text-center">
                 <p className="text-lg font-semibold text-ink">
                   {query ? "Aramanızla eşleşen yazı bulunamadı." : "Henüz yayınlanmış yazı yok."}
                 </p>
@@ -184,7 +190,6 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           )}
 
           {!query && <Pagination page={page} pageCount={pageCount} />}
-          </div>
         </section>
       </main>
 

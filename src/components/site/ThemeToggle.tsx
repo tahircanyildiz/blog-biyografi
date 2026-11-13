@@ -26,7 +26,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       onClick={toggle}
       aria-label="Açık/koyu temayı değiştir"
       title="Temayı değiştir"
-      className={`inline-flex size-10 items-center justify-center rounded-md text-muted transition-colors hover:text-ink ${className}`}
+      className={`inline-flex size-10 items-center justify-center rounded-full border border-border bg-surface/60 text-muted transition-colors hover:border-border-hover hover:text-ink ${className}`}
     >
       <Sun size={18} aria-hidden className="hidden light:block" />
       <Moon size={18} aria-hidden className="block light:hidden" />

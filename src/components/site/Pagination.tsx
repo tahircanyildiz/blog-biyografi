@@ -16,7 +16,7 @@ export function Pagination({ page, pageCount }: PaginationProps) {
 
   const pages = Array.from({ length: pageCount }, (_, index) => index + 1);
   const base =
-    "tabular inline-flex h-11 min-w-11 items-center justify-center gap-1.5 rounded-md border px-4 text-sm font-medium transition-colors";
+    "inline-flex h-11 min-w-11 items-center justify-center gap-1.5 rounded-full border px-4 text-sm font-semibold transition-colors";
 
   return (
     <nav aria-label="Sayfalar" className="mt-14 flex flex-wrap items-center justify-center gap-2">
